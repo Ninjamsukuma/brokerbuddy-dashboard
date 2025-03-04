@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap');
 
@@ -121,8 +122,9 @@
   
   .brand-logo {
     font-family: 'Lemon Milk', 'Montserrat', sans-serif;
-    font-weight: 700;
-    letter-spacing: 0.05em;
+    font-weight: 500;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
     @apply text-dalali-600;
   }
 }

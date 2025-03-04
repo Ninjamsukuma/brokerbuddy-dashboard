@@ -9,7 +9,7 @@ interface NavigationBarProps {
 }
 
 const NavigationBar: React.FC<NavigationBarProps> = ({
-  title = "DK", // Changed from "Dalali Kiganjani" to "DK"
+  title = "Dalali Kiganjani", // Restored full name
   showSearch = true,
   showMenu = true,
 }) => {
@@ -23,8 +23,10 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
           </button>
         )}
         
-        {/* Center: Title or Logo - using our new brand-logo class */}
-        <h1 className={`text-lg ${title === "DK" ? "brand-logo text-xl" : "font-semibold"}`}>{title}</h1>
+        {/* Center: Title or Logo - styled as signature-like text */}
+        <h1 className={`text-sm font-medium tracking-tight text-center ${title === "Dalali Kiganjani" ? "brand-logo italic" : "font-semibold"}`}>
+          {title}
+        </h1>
         
         {/* Right side: Notification and Profile */}
         <div className="flex items-center space-x-3">
