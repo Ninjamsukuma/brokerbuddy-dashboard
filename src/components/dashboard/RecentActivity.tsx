@@ -26,7 +26,7 @@ const activities: ActivityItem[] = [
     id: '2',
     type: 'message',
     title: 'New message from James Wilson',
-    description: 'I've found a property that matches your...',
+    description: "I've found a property that matches your...",
     time: '5h ago',
     actionRequired: true
   },
