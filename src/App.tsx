@@ -20,14 +20,14 @@ const queryClient = new QueryClient();
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
 
-  // Check if the app was recently opened
+  // Check if the app was recently opened - shortened to 3 minutes for better UX
   useEffect(() => {
     const lastOpened = localStorage.getItem('lastOpened');
     const now = Date.now();
-    const fiveMinutesAgo = now - 5 * 60 * 1000; // 5 minutes in milliseconds
+    const threeMinutesAgo = now - 3 * 60 * 1000; // 3 minutes in milliseconds
     
-    // Skip splash if app was opened in the last 5 minutes
-    if (lastOpened && parseInt(lastOpened) > fiveMinutesAgo) {
+    // Skip splash if app was opened in the last 3 minutes
+    if (lastOpened && parseInt(lastOpened) > threeMinutesAgo) {
       setShowSplash(false);
     } else {
       localStorage.setItem('lastOpened', now.toString());
@@ -44,7 +44,7 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {showSplash ? (
               <SplashScreen onAnimationComplete={handleAnimationComplete} />
             ) : (

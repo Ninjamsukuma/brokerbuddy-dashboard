@@ -2,6 +2,7 @@
 export const swTranslations = {
   // App name and general
   'appName': 'Dalali Kiganjani',
+  'tagline': 'Tunakuunganisha na madalali bora wa mali',
   
   // Menu items
   'menu.main': 'Menyu Kuu',
@@ -37,6 +38,11 @@ export const swTranslations = {
   'profile.verified': 'Mtumiaji Aliyethibitishwa',
   'profile.pending': 'Uthibitishaji Unasubiri',
   'profile.unverified': 'Akaunti Isiyothibitishwa',
+  
+  // Language
+  'language': 'Lugha',
+  'language.en': 'Kiingereza',
+  'language.sw': 'Kiswahili',
   
   // Misc
   'version': 'Toleo',

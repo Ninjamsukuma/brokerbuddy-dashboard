@@ -2,6 +2,7 @@
 export const enTranslations = {
   // App name and general
   'appName': 'Dalali Kiganjani',
+  'tagline': 'Connecting you to the best real estate brokers',
   
   // Menu items
   'menu.main': 'Main Menu',
@@ -37,6 +38,11 @@ export const enTranslations = {
   'profile.verified': 'Verified User',
   'profile.pending': 'Verification Pending',
   'profile.unverified': 'Unverified Account',
+  
+  // Language
+  'language': 'Language',
+  'language.en': 'English',
+  'language.sw': 'Swahili',
   
   // Misc
   'version': 'Version',
