@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { LanguageProvider } from "@/hooks/useLanguage";
 import SplashScreen from "./components/SplashScreen";
 import Index from "./pages/Index";
 import FindBroker from "./pages/FindBroker";
@@ -39,27 +40,29 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <AnimatePresence>
-          {showSplash ? (
-            <SplashScreen onAnimationComplete={handleAnimationComplete} />
-          ) : (
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/find-broker" element={<FindBroker />} />
-                <Route path="/requests" element={<Requests />} />
-                <Route path="/messages" element={<Messages />} />
-                <Route path="/profile" element={<Profile />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          )}
-        </AnimatePresence>
-      </TooltipProvider>
+      <LanguageProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <AnimatePresence>
+            {showSplash ? (
+              <SplashScreen onAnimationComplete={handleAnimationComplete} />
+            ) : (
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/find-broker" element={<FindBroker />} />
+                  <Route path="/requests" element={<Requests />} />
+                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/profile" element={<Profile />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            )}
+          </AnimatePresence>
+        </TooltipProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 };

@@ -1,6 +1,6 @@
-
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface SplashScreenProps {
   onAnimationComplete: () => void;
@@ -8,6 +8,7 @@ interface SplashScreenProps {
 
 const SplashScreen = ({ onAnimationComplete }: SplashScreenProps) => {
   const [progress, setProgress] = useState(0);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -37,7 +38,7 @@ const SplashScreen = ({ onAnimationComplete }: SplashScreenProps) => {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="relative mb-8"
       >
-        <h1 className="brand-logo text-2xl">Dalali Kiganjani</h1>
+        <h1 className="brand-logo text-2xl">{t('appName')}</h1>
         
         {/* Optional glow effect */}
         <motion.div 

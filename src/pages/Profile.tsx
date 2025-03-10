@@ -1,10 +1,12 @@
-
 import React from 'react';
 import { ChevronRight, User, Shield, CreditCard, Bell, HelpCircle, LogOut, Mail, Phone, MapPin, Settings } from 'lucide-react';
 import NavigationBar from '../components/ui/NavigationBar';
 import BottomTabs from '../components/ui/BottomTabs';
+import { useLanguage } from '@/hooks/useLanguage';
 
 const Profile = () => {
+  const { t } = useLanguage();
+  
   // Mock user data
   const user = {
     name: 'Samwel Johnson',
@@ -17,33 +19,33 @@ const Profile = () => {
 
   const menuSections = [
     {
-      title: 'Account',
+      title: t('profile.title'),
       items: [
-        { icon: User, label: 'Personal Details', path: '/profile/details' },
-        { icon: Shield, label: 'Security & Privacy', path: '/profile/security' },
-        { icon: CreditCard, label: 'Payment Methods', path: '/profile/payments' },
+        { icon: User, label: t('profile.personalDetails'), path: '/profile/details' },
+        { icon: Shield, label: t('profile.security'), path: '/profile/security' },
+        { icon: CreditCard, label: t('profile.paymentMethods'), path: '/profile/payments' },
       ]
     },
     {
       title: 'Preferences',
       items: [
-        { icon: Bell, label: 'Notifications', path: '/profile/notifications' },
-        { icon: MapPin, label: 'Location Settings', path: '/profile/location' },
-        { icon: Settings, label: 'App Settings', path: '/profile/settings' },
+        { icon: Bell, label: t('profile.notifications'), path: '/profile/notifications' },
+        { icon: MapPin, label: t('profile.locationSettings'), path: '/profile/location' },
+        { icon: Settings, label: t('profile.appSettings'), path: '/profile/settings' },
       ]
     },
     {
       title: 'Support',
       items: [
-        { icon: HelpCircle, label: 'Help Center', path: '/help' },
-        { icon: LogOut, label: 'Logout', path: '/logout', danger: true },
+        { icon: HelpCircle, label: t('profile.helpCenter'), path: '/help' },
+        { icon: LogOut, label: t('profile.logout'), path: '/logout', danger: true },
       ]
     }
   ];
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <NavigationBar title="Profile" showSearch={false} />
+      <NavigationBar title={t('profile.title')} showSearch={false} />
       
       <main className="px-4 pb-4">
         {/* Profile header */}
@@ -70,15 +72,15 @@ const Profile = () => {
             {user.verificationStatus === 'verified' ? (
               <div className="chip bg-green-100 text-green-700">
                 <Shield size={12} className="mr-1" />
-                Verified User
+                {t('profile.verified')}
               </div>
             ) : user.verificationStatus === 'pending' ? (
               <div className="chip bg-amber-100 text-amber-700">
-                Verification Pending
+                {t('profile.pending')}
               </div>
             ) : (
               <div className="chip bg-red-100 text-red-700">
-                Unverified Account
+                {t('profile.unverified')}
               </div>
             )}
           </div>
@@ -99,7 +101,7 @@ const Profile = () => {
           </div>
           
           <button className="mt-4 py-2 px-6 bg-dalali-600 text-white rounded-lg text-sm font-medium shadow-sm">
-            Edit Profile
+            {t('profile.editProfile')}
           </button>
         </div>
         
@@ -133,8 +135,8 @@ const Profile = () => {
         ))}
         
         <div className="text-center text-xs text-gray-500 mt-6 mb-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-          <p>Dalali Kiganjani v1.0.0</p>
-          <p className="mt-1">© 2023 All rights reserved</p>
+          <p>{t('appName')} {t('version')} 1.0.0</p>
+          <p className="mt-1">© 2023 {t('allRightsReserved')}</p>
         </div>
       </main>
       
