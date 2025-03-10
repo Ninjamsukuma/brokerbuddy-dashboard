@@ -12,11 +12,11 @@ const SplashScreen = ({ onAnimationComplete }: SplashScreenProps) => {
   const [progress, setProgress] = useState(0);
   const { t } = useLanguage();
   
-  // Speed up the progress to complete in 2.5 seconds total
+  // Slow down the progress to complete in 3.5 seconds total
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prevProgress) => {
-        const newProgress = prevProgress + 4; // Faster increment
+        const newProgress = prevProgress + 2.85; // Slower increment for 3.5s total
         return newProgress >= 100 ? 100 : newProgress;
       });
     }, 25);
@@ -85,18 +85,7 @@ const SplashScreen = ({ onAnimationComplete }: SplashScreenProps) => {
             />
           </motion.div>
 
-          {/* Title with text animation */}
-          <motion.h1 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ 
-              opacity: 1, 
-              y: 0,
-              transition: { delay: 0.3, duration: 0.4 }
-            }}
-            className="brand-logo text-2xl mt-4 text-center"
-          >
-            {t('appName')}
-          </motion.h1>
+          {/* Removed Title/appName */}
           
           {/* Ripple/glow animations */}
           <motion.div 
