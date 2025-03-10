@@ -9,29 +9,20 @@ interface SplashScreenProps {
 }
 
 const SplashScreen = ({ onAnimationComplete }: SplashScreenProps) => {
-  const [progress, setProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const { t } = useLanguage();
   
-  // Slow down the progress to complete in 3.5 seconds total
+  // Complete animation in 3.5 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prevProgress) => {
-        const newProgress = prevProgress + 2.85; // Slower increment for 3.5s total
-        return newProgress >= 100 ? 100 : newProgress;
-      });
-    }, 25);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    if (progress === 100) {
-      const timer = setTimeout(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      setTimeout(() => {
         onAnimationComplete();
       }, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [progress, onAnimationComplete]);
+    }, 3500);
+
+    return () => clearTimeout(timer);
+  }, [onAnimationComplete]);
 
   return (
     <AnimatePresence>
@@ -64,28 +55,34 @@ const SplashScreen = ({ onAnimationComplete }: SplashScreenProps) => {
             }
           }}
         >
-          {/* Logo with bounce animation */}
+          {/* Logo with rotation animation to act as loader */}
           <motion.div
             animate={{ 
+              rotate: isLoading ? 360 : 0,
               y: [0, -8, 0],
             }}
             transition={{ 
-              duration: 2, 
-              ease: "easeInOut", 
-              repeat: Infinity,
-              repeatType: "mirror"
+              rotate: {
+                duration: 2,
+                ease: "linear",
+                repeat: Infinity
+              },
+              y: { 
+                duration: 2, 
+                ease: "easeInOut", 
+                repeat: Infinity,
+                repeatType: "mirror"
+              }
             }}
             className="flex items-center justify-center"
           >
-            {/* Use the provided logo */}
+            {/* Use the provided logo with larger size */}
             <img 
               src="/lovable-uploads/4517b9c4-9005-4325-9427-42aa560001a3.png" 
               alt="Dalali Kiganjani" 
-              className="w-24 h-24 object-contain"
+              className="w-36 h-36 object-contain" // Increased size from w-24 h-24
             />
           </motion.div>
-
-          {/* Removed Title/appName */}
           
           {/* Ripple/glow animations */}
           <motion.div 
@@ -137,16 +134,6 @@ const SplashScreen = ({ onAnimationComplete }: SplashScreenProps) => {
         >
           <MapPin className="w-8 h-8 text-dalali-600 dark:text-dalali-400" />
         </motion.div>
-
-        {/* Progress bar with animated fill */}
-        <div className="w-60 h-1.5 bg-dalali-200/30 dark:bg-dalali-800/30 rounded-full overflow-hidden">
-          <motion.div 
-            className="h-full bg-gradient-to-r from-blue-500 to-green-500"
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.1 }}
-          />
-        </div>
 
         {/* Tagline */}
         <motion.p

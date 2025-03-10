@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { Star, MapPin, Shield, MessageSquare } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from "@/components/ui/use-toast";
 
 export interface BrokerProps {
   id: string;
@@ -12,12 +14,33 @@ export interface BrokerProps {
   specialties: string[];
   verified: boolean;
   online: boolean;
+  priceLevel?: 'low' | 'medium' | 'high';
 }
 
 const BrokerCard: React.FC<{ broker: BrokerProps; featured?: boolean }> = ({ 
   broker, 
   featured = false 
 }) => {
+  const navigate = useNavigate();
+
+  const handleContact = () => {
+    toast({
+      title: "Contact Initiated",
+      description: `Connecting you with ${broker.name}`,
+      duration: 3000,
+    });
+    navigate(`/messages`);
+  };
+
+  const handleMessage = () => {
+    toast({
+      title: "Message",
+      description: `Opening chat with ${broker.name}`,
+      duration: 3000,
+    });
+    navigate(`/messages`);
+  };
+
   return (
     <div className={`relative rounded-xl overflow-hidden bg-white shadow-sm animate-scale-up card-hover ${featured ? 'border border-dalali-100' : ''}`}>
       <div className="absolute top-2 right-2 z-10">
@@ -73,10 +96,16 @@ const BrokerCard: React.FC<{ broker: BrokerProps; featured?: boolean }> = ({
           </div>
           
           <div className="flex space-x-2 mt-4">
-            <button className="flex-1 bg-dalali-600 text-white py-2 px-4 rounded-lg text-sm font-medium shadow-sm transition-all hover:bg-dalali-700 active:scale-[0.98]">
+            <button 
+              className="flex-1 bg-dalali-600 text-white py-2 px-4 rounded-lg text-sm font-medium shadow-sm transition-all hover:bg-dalali-700 active:scale-[0.98]"
+              onClick={handleContact}
+            >
               Contact
             </button>
-            <button className="icon-button">
+            <button 
+              className="icon-button"
+              onClick={handleMessage}
+            >
               <MessageSquare size={18} className="text-dalali-600" />
             </button>
           </div>

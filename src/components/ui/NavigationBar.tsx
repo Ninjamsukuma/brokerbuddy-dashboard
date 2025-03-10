@@ -15,6 +15,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useLanguage } from '@/hooks/useLanguage';
+import { toast } from "@/components/ui/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface NavigationBarProps {
   title?: string;
@@ -28,6 +30,29 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
   showMenu = true,
 }) => {
   const { language, setLanguage, t } = useLanguage();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+  const handleLanguageChange = (lang: 'en' | 'sw') => {
+    setLanguage(lang);
+    toast({
+      title: t('languageChanged'),
+      description: lang === 'en' ? 'Language set to English' : 'Lugha imewekwa kuwa Kiswahili',
+      duration: 3000,
+    });
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({
+      title: t('searchStarted'),
+      description: `${t('searching')}: ${searchQuery}`,
+      duration: 3000,
+    });
+    setIsSearchOpen(false);
+    setSearchQuery('');
+  };
 
   return (
     <div className="sticky top-0 z-40 w-full">
@@ -85,15 +110,63 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
         {/* Right side: Language selector, Notification */}
         <div className="flex items-center space-x-3">
           {showSearch && (
-            <button className="icon-button">
-              <Search size={20} className="text-dalali-600" />
-            </button>
+            <>
+              <button className="icon-button" onClick={() => setIsSearchOpen(true)}>
+                <Search size={20} className="text-dalali-600" />
+              </button>
+              
+              <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>{t('search')}</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleSearch} className="space-y-4">
+                    <div className="relative">
+                      <Search size={18} className="absolute top-3 left-3 text-gray-400" />
+                      <input 
+                        type="text" 
+                        className="w-full border rounded-md pl-10 pr-4 py-2"
+                        placeholder={t('searchPlaceholder')}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                    </div>
+                    <button 
+                      type="submit"
+                      className="w-full bg-dalali-600 text-white py-2 rounded-md"
+                    >
+                      {t('searchButton')}
+                    </button>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </>
           )}
           
-          <button className="icon-button relative">
+          <button 
+            className="icon-button relative" 
+            onClick={() => setIsNotificationsOpen(true)}
+          >
             <Bell size={20} className="text-dalali-600" />
             <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-dalali-600"></span>
           </button>
+          
+          <Dialog open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>{t('notifications')}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="border-b pb-3">
+                    <h4 className="font-medium">{t('notificationTitle')}</h4>
+                    <p className="text-sm text-gray-500">{t('notificationDesc')}</p>
+                    <p className="text-xs text-gray-400 mt-1">2h ago</p>
+                  </div>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -102,10 +175,16 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setLanguage('en')} className={language === 'en' ? 'bg-accent' : ''}>
+              <DropdownMenuItem 
+                onClick={() => handleLanguageChange('en')} 
+                className={language === 'en' ? 'bg-accent' : ''}
+              >
                 🇬🇧 English
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLanguage('sw')} className={language === 'sw' ? 'bg-accent' : ''}>
+              <DropdownMenuItem 
+                onClick={() => handleLanguageChange('sw')} 
+                className={language === 'sw' ? 'bg-accent' : ''}
+              >
                 🇹🇿 Kiswahili
               </DropdownMenuItem>
             </DropdownMenuContent>
