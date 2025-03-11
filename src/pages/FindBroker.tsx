@@ -96,7 +96,7 @@ const FindBroker = () => {
   const [selectedDistance, setSelectedDistance] = useState<DistanceFilter>('all');
   const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
   
-  // Filter dialog states
+  // Filter dialog states - MODIFIED: only show dropdown when clicked
   const [showServiceFilter, setShowServiceFilter] = useState(false);
   const [showRatingFilter, setShowRatingFilter] = useState(false);
   const [showPriceFilter, setShowPriceFilter] = useState(false);
@@ -214,6 +214,14 @@ const FindBroker = () => {
     });
   };
 
+  // Function to close all filter dropdowns
+  const closeAllDropdowns = (except?: string) => {
+    if (except !== 'service') setShowServiceFilter(false);
+    if (except !== 'rating') setShowRatingFilter(false);
+    if (except !== 'price') setShowPriceFilter(false);
+    if (except !== 'distance') setShowDistanceFilter(false);
+  };
+
   // Animation variants for dropdown menus
   const dropdownVariants = {
     hidden: { opacity: 0, scale: 0.95, y: -5 },
@@ -262,6 +270,7 @@ const FindBroker = () => {
                 setSelectedPrice('all');
                 setSelectedDistance('all');
                 setShowVerifiedOnly(false);
+                closeAllDropdowns();
                 toast({
                   title: "Filters reset",
                   description: "Showing all brokers",
@@ -273,12 +282,14 @@ const FindBroker = () => {
               Filter
             </button>
 
-            {/* Service Filter */}
+            {/* Service Filter - MODIFIED: only show on click not hover */}
             <div className="relative">
               <button 
                 className={`chip ${selectedService !== 'all' ? 'bg-dalali-100 text-dalali-700' : 'bg-gray-100 text-gray-700'} flex items-center hover:bg-dalali-50 transition-colors duration-200`}
-                onMouseEnter={() => setShowServiceFilter(true)}
-                onClick={() => setShowServiceFilter(!showServiceFilter)}
+                onClick={() => {
+                  setShowServiceFilter(!showServiceFilter);
+                  closeAllDropdowns('service');
+                }}
               >
                 Service
                 <ChevronDown size={14} className="ml-1" />
@@ -292,7 +303,6 @@ const FindBroker = () => {
                     animate="visible"
                     exit="exit"
                     variants={dropdownVariants}
-                    onMouseLeave={() => setShowServiceFilter(false)}
                   >
                     <button 
                       className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedService === 'all' ? 'bg-gray-100' : ''}`}
@@ -316,12 +326,14 @@ const FindBroker = () => {
               </AnimatePresence>
             </div>
             
-            {/* Rating Filter */}
+            {/* Rating Filter - MODIFIED: only show on click not hover */}
             <div className="relative">
               <button 
                 className={`chip ${selectedRating !== 'all' ? 'bg-dalali-100 text-dalali-700' : 'bg-gray-100 text-gray-700'} flex items-center hover:bg-dalali-50 transition-colors duration-200`}
-                onMouseEnter={() => setShowRatingFilter(true)}
-                onClick={() => setShowRatingFilter(!showRatingFilter)}
+                onClick={() => {
+                  setShowRatingFilter(!showRatingFilter);
+                  closeAllDropdowns('rating');
+                }}
               >
                 <Star size={14} className="mr-1" />
                 Rating
@@ -336,7 +348,6 @@ const FindBroker = () => {
                     animate="visible"
                     exit="exit"
                     variants={dropdownVariants}
-                    onMouseLeave={() => setShowRatingFilter(false)}
                   >
                     <button 
                       className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedRating === 'all' ? 'bg-gray-100' : ''}`}
@@ -367,12 +378,14 @@ const FindBroker = () => {
               </AnimatePresence>
             </div>
             
-            {/* Price Filter */}
+            {/* Price Filter - MODIFIED: only show on click not hover */}
             <div className="relative">
               <button 
                 className={`chip ${selectedPrice !== 'all' ? 'bg-dalali-100 text-dalali-700' : 'bg-gray-100 text-gray-700'} flex items-center hover:bg-dalali-50 transition-colors duration-200`}
-                onMouseEnter={() => setShowPriceFilter(true)}
-                onClick={() => setShowPriceFilter(!showPriceFilter)}
+                onClick={() => {
+                  setShowPriceFilter(!showPriceFilter);
+                  closeAllDropdowns('price');
+                }}
               >
                 <DollarSign size={14} className="mr-1" />
                 Price
@@ -387,7 +400,6 @@ const FindBroker = () => {
                     animate="visible"
                     exit="exit"
                     variants={dropdownVariants}
-                    onMouseLeave={() => setShowPriceFilter(false)}
                   >
                     <button 
                       className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedPrice === 'all' ? 'bg-gray-100' : ''}`}
@@ -418,12 +430,14 @@ const FindBroker = () => {
               </AnimatePresence>
             </div>
             
-            {/* Distance Filter */}
+            {/* Distance Filter - MODIFIED: only show on click not hover */}
             <div className="relative">
               <button 
                 className={`chip ${selectedDistance !== 'all' ? 'bg-dalali-100 text-dalali-700' : 'bg-gray-100 text-gray-700'} flex items-center hover:bg-dalali-50 transition-colors duration-200`}
-                onMouseEnter={() => setShowDistanceFilter(true)}
-                onClick={() => setShowDistanceFilter(!showDistanceFilter)}
+                onClick={() => {
+                  setShowDistanceFilter(!showDistanceFilter);
+                  closeAllDropdowns('distance');
+                }}
               >
                 <MapPin size={14} className="mr-1" />
                 Distance
@@ -438,7 +452,6 @@ const FindBroker = () => {
                     animate="visible"
                     exit="exit"
                     variants={dropdownVariants}
-                    onMouseLeave={() => setShowDistanceFilter(false)}
                   >
                     <button 
                       className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedDistance === 'all' ? 'bg-gray-100' : ''}`}

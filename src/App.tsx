@@ -7,12 +7,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { LanguageProvider } from "@/hooks/useLanguage";
+import { AuthProvider } from "@/contexts/AuthContext";
 import SplashScreen from "./components/SplashScreen";
 import Index from "./pages/Index";
 import FindBroker from "./pages/FindBroker";
 import Requests from "./pages/Requests";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import BrokerDashboard from "./pages/BrokerDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,29 +44,37 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <AnimatePresence mode="wait">
-            {showSplash ? (
-              <SplashScreen onAnimationComplete={handleAnimationComplete} />
-            ) : (
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/find-broker" element={<FindBroker />} />
-                  <Route path="/requests" element={<Requests />} />
-                  <Route path="/messages" element={<Messages />} />
-                  <Route path="/profile" element={<Profile />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </BrowserRouter>
-            )}
-          </AnimatePresence>
-        </TooltipProvider>
-      </LanguageProvider>
+      <AuthProvider>
+        <LanguageProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <AnimatePresence mode="wait">
+              {showSplash ? (
+                <SplashScreen onAnimationComplete={handleAnimationComplete} />
+              ) : (
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/find-broker" element={<FindBroker />} />
+                    <Route path="/requests" element={<Requests />} />
+                    <Route path="/messages" element={<Messages />} />
+                    <Route path="/profile" element={<Profile />} />
+                    
+                    {/* New Auth Routes */}
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<Signup />} />
+                    <Route path="/broker-dashboard" element={<BrokerDashboard />} />
+                    
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </BrowserRouter>
+              )}
+            </AnimatePresence>
+          </TooltipProvider>
+        </LanguageProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };
