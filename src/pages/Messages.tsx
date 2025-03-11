@@ -299,7 +299,7 @@ const Messages = () => {
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
               />
               <button className="p-2 text-gray-500">
-                <PaperClip size={20} />
+                <Paperclip size={20} />
               </button>
               <button 
                 className="p-2 text-gray-500"
