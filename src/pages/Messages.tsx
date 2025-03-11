@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Phone, Video, ChevronRight, MessageSquare, X, ArrowLeft, Send, Mic, Image, Smile, PaperClip } from 'lucide-react';
+import { Search, Phone, Video, ChevronRight, MessageSquare, X, ArrowLeft, Send, Mic, 
+         Image, Smile, Paperclip, Home, Car, Shield, Shirt } from 'lucide-react';
 import NavigationBar from '../components/ui/NavigationBar';
 import BottomTabs from '../components/ui/BottomTabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -66,7 +66,6 @@ const chats: ChatItem[] = [
   }
 ];
 
-// Mock chat messages for the active chat
 interface ChatMessage {
   id: string;
   sender: 'user' | 'other';
@@ -80,16 +79,13 @@ const Messages = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   
-  // Dialog states
   const [isNewChatOpen, setIsNewChatOpen] = useState(false);
   const [isCallDialogOpen, setIsCallDialogOpen] = useState(false);
   const [isVideoDialogOpen, setIsVideoDialogOpen] = useState(false);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   
-  // New message input
   const [newMessage, setNewMessage] = useState('');
   
-  // Mock data for active chat messages
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -148,7 +144,6 @@ const Messages = () => {
     setChatMessages([...chatMessages, newMsg]);
     setNewMessage('');
     
-    // Simulate reply after 2 seconds
     setTimeout(() => {
       const replyMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -177,7 +172,6 @@ const Messages = () => {
     
     setIsCallDialogOpen(true);
     
-    // Simulate call connecting
     setTimeout(() => {
       toast({
         title: "Call Connected",
@@ -192,7 +186,6 @@ const Messages = () => {
     
     setIsVideoDialogOpen(true);
     
-    // Simulate video connecting
     setTimeout(() => {
       toast({
         title: "Video Call Connected",
@@ -205,16 +198,12 @@ const Messages = () => {
   const handleChatClick = (chatId: string) => {
     setActiveChatId(chatId);
     
-    // Mark messages as read
     setChatMessages(prev => 
       prev.map(msg => ({
         ...msg,
         read: true
       }))
     );
-    
-    // Update unread count in chats list (in a real app, this would be handled by the backend)
-    // This is just a mock implementation
   };
 
   return (
@@ -223,9 +212,7 @@ const Messages = () => {
       
       <main className="px-4 pb-4">
         {activeChatId ? (
-          // Active chat view
           <div className="flex flex-col h-[calc(100vh-180px)]">
-            {/* Chat header */}
             <div className="flex items-center justify-between py-3 border-b mb-2">
               <div className="flex items-center">
                 <button 
@@ -272,7 +259,6 @@ const Messages = () => {
               </div>
             </div>
             
-            {/* Chat messages */}
             <div className="flex-grow overflow-y-auto mb-4 space-y-4 p-2">
               {chatMessages.map(message => (
                 <div 
@@ -300,7 +286,6 @@ const Messages = () => {
               ))}
             </div>
             
-            {/* Message input */}
             <div className="flex items-center bg-white border rounded-full px-3 py-1">
               <button className="p-2 text-gray-500">
                 <Smile size={20} />
@@ -325,9 +310,7 @@ const Messages = () => {
             </div>
           </div>
         ) : (
-          // Chat list view
           <>
-            {/* Search input */}
             <div className="pt-4 pb-2 sticky top-[61px] z-30 bg-background animate-fade-in">
               <div className="relative mb-3">
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -343,7 +326,6 @@ const Messages = () => {
               </div>
             </div>
             
-            {/* Chat list */}
             <div className="mt-3 space-y-1 animate-slide-up">
               {filteredChats.length > 0 ? (
                 filteredChats.map((chat, index) => (
@@ -398,7 +380,6 @@ const Messages = () => {
               )}
             </div>
             
-            {/* Quick actions */}
             <div className="fixed left-0 right-0 bottom-20 px-4 pb-2">
               <div className="flex justify-around py-3 glassmorphism rounded-xl shadow-sm animate-slide-up">
                 <button 
@@ -448,7 +429,6 @@ const Messages = () => {
         )}
       </main>
       
-      {/* New Chat Dialog */}
       <Dialog open={isNewChatOpen} onOpenChange={setIsNewChatOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -496,7 +476,6 @@ const Messages = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Call Dialog */}
       <Dialog open={isCallDialogOpen} onOpenChange={setIsCallDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <div className="py-8 flex flex-col items-center">
@@ -529,7 +508,6 @@ const Messages = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Video Call Dialog */}
       <Dialog open={isVideoDialogOpen} onOpenChange={setIsVideoDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <div className="py-4 flex flex-col items-center">
