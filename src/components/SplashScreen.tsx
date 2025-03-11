@@ -55,16 +55,16 @@ const SplashScreen = ({ onAnimationComplete }: SplashScreenProps) => {
             }
           }}
         >
-          {/* Logo with rotation animation to act as loader */}
+          {/* Logo with zoom pulse animation instead of rotation */}
           <motion.div
             animate={{ 
-              rotate: isLoading ? 360 : 0,
+              scale: isLoading ? [1, 1.1, 1] : 1,
               y: [0, -8, 0],
             }}
             transition={{ 
-              rotate: {
+              scale: {
                 duration: 2,
-                ease: "linear",
+                ease: "easeInOut",
                 repeat: Infinity
               },
               y: { 
@@ -80,7 +80,7 @@ const SplashScreen = ({ onAnimationComplete }: SplashScreenProps) => {
             <img 
               src="/lovable-uploads/4517b9c4-9005-4325-9427-42aa560001a3.png" 
               alt="Dalali Kiganjani" 
-              className="w-36 h-36 object-contain" // Increased size from w-24 h-24
+              className="w-48 h-48 object-contain" // Increased size from w-36 h-36
             />
           </motion.div>
           

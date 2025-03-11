@@ -6,6 +6,7 @@ import NavigationBar from '../components/ui/NavigationBar';
 import BrokerCard, { BrokerProps } from '../components/shared/BrokerCard';
 import BottomTabs from '../components/ui/BottomTabs';
 import { toast } from "@/components/ui/use-toast";
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Service types
 type ServiceType = 'all' | 'car-sales' | 'real-estate' | 'apartments' | 'rental' | 'residential' | 'insurance' | 'clothing' | 'cosmetics';
@@ -213,6 +214,23 @@ const FindBroker = () => {
     });
   };
 
+  // Animation variants for dropdown menus
+  const dropdownVariants = {
+    hidden: { opacity: 0, scale: 0.95, y: -5 },
+    visible: { 
+      opacity: 1, 
+      scale: 1, 
+      y: 0,
+      transition: { duration: 0.2, ease: "easeOut" }
+    },
+    exit: { 
+      opacity: 0, 
+      scale: 0.95, 
+      y: -5, 
+      transition: { duration: 0.15, ease: "easeIn" }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background pb-20">
       <NavigationBar title="Find a Broker" showSearch={false} />
@@ -236,7 +254,7 @@ const FindBroker = () => {
           {/* Filter options */}
           <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none animate-slide-up">
             <button 
-              className="chip bg-dalali-600 text-white"
+              className="chip bg-dalali-600 text-white hover:bg-dalali-700 transition-colors duration-200"
               onClick={() => {
                 // Reset all filters
                 setSelectedService('all');
@@ -258,40 +276,51 @@ const FindBroker = () => {
             {/* Service Filter */}
             <div className="relative">
               <button 
-                className={`chip ${selectedService !== 'all' ? 'bg-dalali-100 text-dalali-700' : 'bg-gray-100 text-gray-700'} flex items-center`}
+                className={`chip ${selectedService !== 'all' ? 'bg-dalali-100 text-dalali-700' : 'bg-gray-100 text-gray-700'} flex items-center hover:bg-dalali-50 transition-colors duration-200`}
+                onMouseEnter={() => setShowServiceFilter(true)}
                 onClick={() => setShowServiceFilter(!showServiceFilter)}
               >
                 Service
                 <ChevronDown size={14} className="ml-1" />
               </button>
               
-              {showServiceFilter && (
-                <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg z-50 py-1 border border-gray-100">
-                  <button 
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedService === 'all' ? 'bg-gray-100' : ''}`}
-                    onClick={() => handleServiceSelect('all')}
+              <AnimatePresence>
+                {showServiceFilter && (
+                  <motion.div 
+                    className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg z-50 py-1 border border-gray-100"
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    variants={dropdownVariants}
+                    onMouseLeave={() => setShowServiceFilter(false)}
                   >
-                    All Services
-                  </button>
-                  
-                  {serviceButtons.map((service) => (
-                    <button
-                      key={service.id}
-                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center ${selectedService === service.id ? 'bg-gray-100' : ''}`}
-                      onClick={() => handleServiceSelect(service.id as ServiceType)}
+                    <button 
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedService === 'all' ? 'bg-gray-100' : ''}`}
+                      onClick={() => handleServiceSelect('all')}
                     >
-                      <service.icon size={14} className="mr-2" />
-                      {service.label}
+                      All Services
                     </button>
-                  ))}
-                </div>
-              )}
+                    
+                    {serviceButtons.map((service) => (
+                      <button
+                        key={service.id}
+                        className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center ${selectedService === service.id ? 'bg-gray-100' : ''}`}
+                        onClick={() => handleServiceSelect(service.id as ServiceType)}
+                      >
+                        <service.icon size={14} className="mr-2" />
+                        {service.label}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             
             {/* Rating Filter */}
             <div className="relative">
               <button 
-                className={`chip ${selectedRating !== 'all' ? 'bg-dalali-100 text-dalali-700' : 'bg-gray-100 text-gray-700'} flex items-center`}
+                className={`chip ${selectedRating !== 'all' ? 'bg-dalali-100 text-dalali-700' : 'bg-gray-100 text-gray-700'} flex items-center hover:bg-dalali-50 transition-colors duration-200`}
+                onMouseEnter={() => setShowRatingFilter(true)}
                 onClick={() => setShowRatingFilter(!showRatingFilter)}
               >
                 <Star size={14} className="mr-1" />
@@ -299,40 +328,50 @@ const FindBroker = () => {
                 <ChevronDown size={14} className="ml-1" />
               </button>
               
-              {showRatingFilter && (
-                <div className="absolute top-full left-0 mt-1 w-36 bg-white rounded-lg shadow-lg z-50 py-1 border border-gray-100">
-                  <button 
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedRating === 'all' ? 'bg-gray-100' : ''}`}
-                    onClick={() => handleRatingSelect('all')}
+              <AnimatePresence>
+                {showRatingFilter && (
+                  <motion.div 
+                    className="absolute top-full left-0 mt-1 w-36 bg-white rounded-lg shadow-lg z-50 py-1 border border-gray-100"
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    variants={dropdownVariants}
+                    onMouseLeave={() => setShowRatingFilter(false)}
                   >
-                    Any Rating
-                  </button>
-                  <button 
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedRating === '4.5+' ? 'bg-gray-100' : ''}`}
-                    onClick={() => handleRatingSelect('4.5+')}
-                  >
-                    4.5+ Stars
-                  </button>
-                  <button 
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedRating === '4+' ? 'bg-gray-100' : ''}`}
-                    onClick={() => handleRatingSelect('4+')}
-                  >
-                    4+ Stars
-                  </button>
-                  <button 
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedRating === '3+' ? 'bg-gray-100' : ''}`}
-                    onClick={() => handleRatingSelect('3+')}
-                  >
-                    3+ Stars
-                  </button>
-                </div>
-              )}
+                    <button 
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedRating === 'all' ? 'bg-gray-100' : ''}`}
+                      onClick={() => handleRatingSelect('all')}
+                    >
+                      Any Rating
+                    </button>
+                    <button 
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedRating === '4.5+' ? 'bg-gray-100' : ''}`}
+                      onClick={() => handleRatingSelect('4.5+')}
+                    >
+                      4.5+ Stars
+                    </button>
+                    <button 
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedRating === '4+' ? 'bg-gray-100' : ''}`}
+                      onClick={() => handleRatingSelect('4+')}
+                    >
+                      4+ Stars
+                    </button>
+                    <button 
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedRating === '3+' ? 'bg-gray-100' : ''}`}
+                      onClick={() => handleRatingSelect('3+')}
+                    >
+                      3+ Stars
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             
             {/* Price Filter */}
             <div className="relative">
               <button 
-                className={`chip ${selectedPrice !== 'all' ? 'bg-dalali-100 text-dalali-700' : 'bg-gray-100 text-gray-700'} flex items-center`}
+                className={`chip ${selectedPrice !== 'all' ? 'bg-dalali-100 text-dalali-700' : 'bg-gray-100 text-gray-700'} flex items-center hover:bg-dalali-50 transition-colors duration-200`}
+                onMouseEnter={() => setShowPriceFilter(true)}
                 onClick={() => setShowPriceFilter(!showPriceFilter)}
               >
                 <DollarSign size={14} className="mr-1" />
@@ -340,40 +379,50 @@ const FindBroker = () => {
                 <ChevronDown size={14} className="ml-1" />
               </button>
               
-              {showPriceFilter && (
-                <div className="absolute top-full left-0 mt-1 w-36 bg-white rounded-lg shadow-lg z-50 py-1 border border-gray-100">
-                  <button 
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedPrice === 'all' ? 'bg-gray-100' : ''}`}
-                    onClick={() => handlePriceSelect('all')}
+              <AnimatePresence>
+                {showPriceFilter && (
+                  <motion.div 
+                    className="absolute top-full left-0 mt-1 w-36 bg-white rounded-lg shadow-lg z-50 py-1 border border-gray-100"
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    variants={dropdownVariants}
+                    onMouseLeave={() => setShowPriceFilter(false)}
                   >
-                    Any Price
-                  </button>
-                  <button 
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedPrice === 'low' ? 'bg-gray-100' : ''}`}
-                    onClick={() => handlePriceSelect('low')}
-                  >
-                    Budget
-                  </button>
-                  <button 
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedPrice === 'medium' ? 'bg-gray-100' : ''}`}
-                    onClick={() => handlePriceSelect('medium')}
-                  >
-                    Mid-range
-                  </button>
-                  <button 
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedPrice === 'high' ? 'bg-gray-100' : ''}`}
-                    onClick={() => handlePriceSelect('high')}
-                  >
-                    Premium
-                  </button>
-                </div>
-              )}
+                    <button 
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedPrice === 'all' ? 'bg-gray-100' : ''}`}
+                      onClick={() => handlePriceSelect('all')}
+                    >
+                      Any Price
+                    </button>
+                    <button 
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedPrice === 'low' ? 'bg-gray-100' : ''}`}
+                      onClick={() => handlePriceSelect('low')}
+                    >
+                      Budget
+                    </button>
+                    <button 
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedPrice === 'medium' ? 'bg-gray-100' : ''}`}
+                      onClick={() => handlePriceSelect('medium')}
+                    >
+                      Mid-range
+                    </button>
+                    <button 
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedPrice === 'high' ? 'bg-gray-100' : ''}`}
+                      onClick={() => handlePriceSelect('high')}
+                    >
+                      Premium
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             
             {/* Distance Filter */}
             <div className="relative">
               <button 
-                className={`chip ${selectedDistance !== 'all' ? 'bg-dalali-100 text-dalali-700' : 'bg-gray-100 text-gray-700'} flex items-center`}
+                className={`chip ${selectedDistance !== 'all' ? 'bg-dalali-100 text-dalali-700' : 'bg-gray-100 text-gray-700'} flex items-center hover:bg-dalali-50 transition-colors duration-200`}
+                onMouseEnter={() => setShowDistanceFilter(true)}
                 onClick={() => setShowDistanceFilter(!showDistanceFilter)}
               >
                 <MapPin size={14} className="mr-1" />
@@ -381,45 +430,54 @@ const FindBroker = () => {
                 <ChevronDown size={14} className="ml-1" />
               </button>
               
-              {showDistanceFilter && (
-                <div className="absolute top-full left-0 mt-1 w-36 bg-white rounded-lg shadow-lg z-50 py-1 border border-gray-100">
-                  <button 
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedDistance === 'all' ? 'bg-gray-100' : ''}`}
-                    onClick={() => handleDistanceSelect('all')}
+              <AnimatePresence>
+                {showDistanceFilter && (
+                  <motion.div 
+                    className="absolute top-full left-0 mt-1 w-36 bg-white rounded-lg shadow-lg z-50 py-1 border border-gray-100"
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    variants={dropdownVariants}
+                    onMouseLeave={() => setShowDistanceFilter(false)}
                   >
-                    Any Distance
-                  </button>
-                  <button 
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedDistance === 'nearby' ? 'bg-gray-100' : ''}`}
-                    onClick={() => handleDistanceSelect('nearby')}
-                  >
-                    Nearby (2km)
-                  </button>
-                  <button 
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedDistance === '5km' ? 'bg-gray-100' : ''}`}
-                    onClick={() => handleDistanceSelect('5km')}
-                  >
-                    Within 5km
-                  </button>
-                  <button 
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedDistance === '10km' ? 'bg-gray-100' : ''}`}
-                    onClick={() => handleDistanceSelect('10km')}
-                  >
-                    Within 10km
-                  </button>
-                  <button 
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedDistance === '25km' ? 'bg-gray-100' : ''}`}
-                    onClick={() => handleDistanceSelect('25km')}
-                  >
-                    Within 25km
-                  </button>
-                </div>
-              )}
+                    <button 
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedDistance === 'all' ? 'bg-gray-100' : ''}`}
+                      onClick={() => handleDistanceSelect('all')}
+                    >
+                      Any Distance
+                    </button>
+                    <button 
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedDistance === 'nearby' ? 'bg-gray-100' : ''}`}
+                      onClick={() => handleDistanceSelect('nearby')}
+                    >
+                      Nearby (2km)
+                    </button>
+                    <button 
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedDistance === '5km' ? 'bg-gray-100' : ''}`}
+                      onClick={() => handleDistanceSelect('5km')}
+                    >
+                      Within 5km
+                    </button>
+                    <button 
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedDistance === '10km' ? 'bg-gray-100' : ''}`}
+                      onClick={() => handleDistanceSelect('10km')}
+                    >
+                      Within 10km
+                    </button>
+                    <button 
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${selectedDistance === '25km' ? 'bg-gray-100' : ''}`}
+                      onClick={() => handleDistanceSelect('25km')}
+                    >
+                      Within 25km
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             
             {/* Verified Toggle */}
             <button 
-              className={`chip ${showVerifiedOnly ? 'bg-dalali-100 text-dalali-700' : 'bg-gray-100 text-gray-700'} flex items-center`}
+              className={`chip ${showVerifiedOnly ? 'bg-dalali-100 text-dalali-700' : 'bg-gray-100 text-gray-700'} flex items-center hover:bg-dalali-50 transition-colors duration-200`}
               onClick={toggleVerifiedOnly}
             >
               Verified
