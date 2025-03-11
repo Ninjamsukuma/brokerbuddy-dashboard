@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Bell, Menu, Languages } from 'lucide-react';
+import { Search, Bell, Menu, Languages, Briefcase } from 'lucide-react';
 import { 
   Sheet,
   SheetContent,
@@ -17,6 +17,7 @@ import {
 import { useLanguage } from '@/hooks/useLanguage';
 import { toast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useNavigate } from 'react-router-dom';
 
 interface NavigationBarProps {
   title?: string;
@@ -29,6 +30,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
   showSearch = true,
   showMenu = true,
 }) => {
+  const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -52,6 +54,10 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
     });
     setIsSearchOpen(false);
     setSearchQuery('');
+  };
+
+  const navigateToBecomeABroker = () => {
+    navigate('/become-broker');
   };
 
   return (
@@ -94,6 +100,16 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                     </button>
                     <button className="w-full flex items-center px-3 py-2 text-sm rounded-md hover:bg-accent">
                       <span>{t('menu.location')}</span>
+                    </button>
+                    <button 
+                      className="w-full flex items-center px-3 py-2 text-sm rounded-md bg-dalali-50 text-dalali-600 hover:bg-dalali-100"
+                      onClick={navigateToBecomeABroker}
+                    >
+                      <Briefcase size={18} className="mr-2 text-dalali-600" />
+                      <div className="flex flex-col items-start">
+                        <span className="font-medium">Become a Broker</span>
+                        <span className="text-xs text-gray-500">Earn money on your schedule</span>
+                      </div>
                     </button>
                   </div>
                 </div>

@@ -17,6 +17,7 @@ import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import BrokerDashboard from "./pages/BrokerDashboard";
+import BecomeBroker from "./pages/BecomeBroker";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -61,10 +62,11 @@ const App = () => {
                     <Route path="/messages" element={<Messages />} />
                     <Route path="/profile" element={<Profile />} />
                     
-                    {/* New Auth Routes */}
+                    {/* Auth Routes */}
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/broker-dashboard" element={<BrokerDashboard />} />
+                    <Route path="/become-broker" element={<BecomeBroker />} />
                     
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />

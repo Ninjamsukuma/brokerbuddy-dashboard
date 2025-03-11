@@ -9,6 +9,8 @@ export const swTranslations = {
   'menu.profile': 'Wasifu',
   'menu.settings': 'Mipangilio',
   'menu.location': 'Eneo',
+  'menu.becomeBroker': 'Kuwa Dalali',
+  'menu.brokerTagline': 'Pata pesa kwa ratiba yako',
   
   // Navigation
   'nav.home': 'Nyumbani',
@@ -39,10 +41,38 @@ export const swTranslations = {
   'profile.pending': 'Uthibitishaji Unasubiri',
   'profile.unverified': 'Akaunti Isiyothibitishwa',
   
+  // Become Broker page
+  'becomeBroker.title': 'Kuwa Dalali',
+  'becomeBroker.hero': 'Geuza ujuzi wako kuwa mapato',
+  'becomeBroker.register': 'Jiandikishe kama Dalali',
+  'becomeBroker.benefits': 'Faida za Kuwa Dalali',
+  'becomeBroker.howItWorks': 'Jinsi Inavyofanya Kazi',
+  'becomeBroker.testimonials': 'Madalali Wetu Wanasema Nini',
+  'becomeBroker.cta': 'Uko Tayari Kuanza Kupata?',
+  
+  // Broker Dashboard
+  'brokerDashboard.title': 'Dashibodi ya Dalali',
+  'brokerDashboard.activeListings': 'Orodha Zinazofanya Kazi',
+  'brokerDashboard.totalViews': 'Jumla ya Maoni',
+  'brokerDashboard.soldRented': 'Kuuzwa/Kukodishwa',
+  'brokerDashboard.addListing': 'Ongeza Orodha Mpya',
+  'brokerDashboard.yourListings': 'Orodha Zako',
+  
   // Language
   'language': 'Lugha',
   'language.en': 'Kiingereza',
   'language.sw': 'Kiswahili',
+  
+  // Search and notifications
+  'search': 'Tafuta',
+  'searchPlaceholder': 'Unatafuta nini?',
+  'searchButton': 'Tafuta',
+  'searchStarted': 'Utafutaji Umeanza',
+  'searching': 'Kutafuta',
+  'notifications': 'Arifa',
+  'notificationTitle': 'Ujumbe Mpya',
+  'notificationDesc': 'Umepokea ujumbe mpya kutoka kwa mteja',
+  'languageChanged': 'Lugha Imebadilishwa',
   
   // Misc
   'version': 'Toleo',
