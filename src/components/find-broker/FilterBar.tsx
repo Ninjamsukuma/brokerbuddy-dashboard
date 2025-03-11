@@ -387,7 +387,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
       </AnimatePresence>
 
       {/* Add styling for filter buttons */}
-      <style jsx global>{`
+      <style>
+        {`
         .filter-button {
           padding: 0.75rem;
           border-radius: 0.5rem;
@@ -406,9 +407,11 @@ const FilterBar: React.FC<FilterBarProps> = ({
           font-weight: 500;
           border: 1px solid #bfdbfe;
         }
-      `}</style>
+        `}
+      </style>
     </>
   );
 };
 
 export default FilterBar;
+
