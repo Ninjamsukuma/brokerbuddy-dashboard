@@ -58,6 +58,16 @@ export const swTranslations = {
   'brokerDashboard.addListing': 'Ongeza Orodha Mpya',
   'brokerDashboard.yourListings': 'Orodha Zako',
   
+  // Broker Statistics
+  'brokerStats.detailedAnalytics': 'Uchanganuzi wa Kina',
+  'brokerStats.weeklyViews': 'Mitazamo ya Kila Wiki',
+  'brokerStats.conversionRates': 'Viwango vya Ubadilishaji',
+  'brokerStats.popularCategories': 'Jamii Maarufu',
+  'brokerStats.viewToInquiry': 'Kutazama hadi Kuuliza',
+  'brokerStats.inquiryToVisit': 'Kuuliza hadi Kutembelea',
+  'brokerStats.visitToOffer': 'Kutembelea hadi Kutoa Ofa',
+  'brokerStats.offerToSale': 'Kutoa Ofa hadi Kuuza',
+  
   // Filter and search
   'all': 'Zote',
   'active': 'Zinazofanya Kazi',

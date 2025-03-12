@@ -58,6 +58,16 @@ export const enTranslations = {
   'brokerDashboard.addListing': 'Add New Listing',
   'brokerDashboard.yourListings': 'Your Listings',
   
+  // Broker Statistics
+  'brokerStats.detailedAnalytics': 'Detailed Analytics',
+  'brokerStats.weeklyViews': 'Weekly Views',
+  'brokerStats.conversionRates': 'Conversion Rates',
+  'brokerStats.popularCategories': 'Popular Categories',
+  'brokerStats.viewToInquiry': 'View to Inquiry',
+  'brokerStats.inquiryToVisit': 'Inquiry to Visit',
+  'brokerStats.visitToOffer': 'Visit to Offer',
+  'brokerStats.offerToSale': 'Offer to Sale',
+  
   // Filter and search
   'all': 'All',
   'active': 'Active',

@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/components/ui/use-toast';
 import { mockListings } from '@/data/mockListings';
 import DashboardStats from '@/components/broker-dashboard/DashboardStats';
+import BrokerStatistics from '@/components/broker-dashboard/BrokerStatistics';
 import SearchBar from '@/components/broker-dashboard/SearchBar';
 import StatusFilter from '@/components/broker-dashboard/StatusFilter';
 import ViewToggle from '@/components/broker-dashboard/ViewToggle';
@@ -20,6 +21,7 @@ const BrokerDashboard = () => {
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'pending' | 'sold'>('all');
+  const [showDetailedStats, setShowDetailedStats] = useState(false);
   
   // Simple filtering logic
   const filteredListings = mockListings.filter(listing => {
@@ -64,6 +66,10 @@ const BrokerDashboard = () => {
     });
   };
   
+  const toggleDetailedStats = () => {
+    setShowDetailedStats(!showDetailedStats);
+  };
+  
   return (
     <div className="min-h-screen bg-background pb-20">
       <NavigationBar title="Broker Dashboard" />
@@ -72,6 +78,19 @@ const BrokerDashboard = () => {
         <div className="pt-4 space-y-4">
           {/* Dashboard Stats */}
           <DashboardStats listings={mockListings} />
+          
+          {/* Toggle Detailed Stats Button */}
+          <button 
+            onClick={toggleDetailedStats}
+            className="w-full bg-dalali-50 text-dalali-800 py-2 rounded-lg font-medium text-sm border border-dalali-200 hover:bg-dalali-100 transition-colors"
+          >
+            {showDetailedStats ? 'Hide Detailed Analytics' : 'Show Detailed Analytics'}
+          </button>
+          
+          {/* Detailed Statistics (conditionally rendered) */}
+          {showDetailedStats && (
+            <BrokerStatistics listings={mockListings} />
+          )}
           
           {/* Search and Filters */}
           <div className="flex flex-col space-y-3">
