@@ -5,6 +5,7 @@ import { ListFilter } from 'lucide-react';
 import { Listing } from '@/types/listing';
 import ListingGridItem from './ListingGridItem';
 import ListingListItem from './ListingListItem';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface ListingsSectionProps {
   listings: Listing[];
@@ -21,6 +22,8 @@ const ListingsSection: React.FC<ListingsSectionProps> = ({
   onShare, 
   onDelete 
 }) => {
+  const { t } = useLanguage();
+  
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -34,15 +37,15 @@ const ListingsSection: React.FC<ListingsSectionProps> = ({
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-3">Your Listings</h2>
+      <h2 className="text-lg font-semibold mb-3">{t('brokerDashboard.yourListings')}</h2>
       
       {listings.length === 0 ? (
         <div className="text-center py-10 bg-white rounded-xl shadow-sm">
           <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-gray-100">
             <ListFilter size={24} className="text-gray-400" />
           </div>
-          <h3 className="text-lg font-medium text-gray-700 mb-1">No listings found</h3>
-          <p className="text-gray-500">Try adjusting your search or filters</p>
+          <h3 className="text-lg font-medium text-gray-700 mb-1">{t('noListingsFound')}</h3>
+          <p className="text-gray-500">{t('adjustFilters')}</p>
         </div>
       ) : (
         <motion.div 

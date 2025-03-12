@@ -58,13 +58,21 @@ export const enTranslations = {
   'brokerDashboard.addListing': 'Add New Listing',
   'brokerDashboard.yourListings': 'Your Listings',
   
+  // Filter and search
+  'all': 'All',
+  'active': 'Active',
+  'pending': 'Pending', 
+  'sold': 'Sold',
+  'search': 'Search',
+  'noListingsFound': 'No listings found',
+  'adjustFilters': 'Try adjusting your search or filters',
+  
   // Language
   'language': 'Language',
   'language.en': 'English',
   'language.sw': 'Swahili',
   
   // Search and notifications
-  'search': 'Search',
   'searchPlaceholder': 'What are you looking for?',
   'searchButton': 'Search',
   'searchStarted': 'Search Started',

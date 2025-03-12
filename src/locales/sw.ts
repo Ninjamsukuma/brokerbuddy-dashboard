@@ -58,13 +58,21 @@ export const swTranslations = {
   'brokerDashboard.addListing': 'Ongeza Orodha Mpya',
   'brokerDashboard.yourListings': 'Orodha Zako',
   
+  // Filter and search
+  'all': 'Zote',
+  'active': 'Zinazofanya Kazi',
+  'pending': 'Zinazosubiri', 
+  'sold': 'Zimeuzwa',
+  'search': 'Tafuta',
+  'noListingsFound': 'Hakuna orodha zilizopatikana',
+  'adjustFilters': 'Jaribu kurekebisha utafutaji au vichujio vyako',
+  
   // Language
   'language': 'Lugha',
   'language.en': 'Kiingereza',
   'language.sw': 'Kiswahili',
   
   // Search and notifications
-  'search': 'Tafuta',
   'searchPlaceholder': 'Unatafuta nini?',
   'searchButton': 'Tafuta',
   'searchStarted': 'Utafutaji Umeanza',
