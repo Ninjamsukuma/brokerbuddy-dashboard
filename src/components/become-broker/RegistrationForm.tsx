@@ -21,8 +21,9 @@ const registrationFormSchema = z.object({
   serviceAreas: z.string().min(3, { message: "Please enter at least one service area" }),
   bio: z.string().min(20, { message: "Bio must be at least 20 characters" }),
   idNumber: z.string().min(5, { message: "ID number must be at least 5 characters" }),
-  termsAccepted: z.literal(true, {
-    errorMap: () => ({ message: "You must accept the terms and conditions" }),
+  // Fix: Change to boolean type with custom validation instead of literal true
+  termsAccepted: z.boolean().refine((val) => val === true, {
+    message: "You must accept the terms and conditions",
   }),
 });
 
@@ -62,7 +63,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
     <section className="mt-4">
       <div className="bg-white rounded-xl p-5 shadow-sm mb-6">
         <h2 className="text-xl font-semibold text-dalali-800 mb-4">
-          {t('becomeBroker.registration') || "Complete Your Broker Registration"}
+          {t('becomeBroker.registration')}
         </h2>
         
         <Form {...form}>
@@ -214,7 +215,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel className="text-sm text-gray-700">
-                      I agree to the Terms of Service and Privacy Policy
+                      {t('becomeBroker.termsLabel') || "I agree to the Terms of Service and Privacy Policy"}
                     </FormLabel>
                     <FormMessage />
                   </div>
@@ -226,7 +227,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
               type="submit"
               className="w-full bg-dalali-600 text-white py-3 rounded-lg font-semibold hover:bg-dalali-700 transition-colors"
             >
-              Complete Registration
+              {t('becomeBroker.submitRegistration') || "Complete Registration"}
             </Button>
           </form>
         </Form>
