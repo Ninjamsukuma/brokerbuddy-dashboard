@@ -1,6 +1,12 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { 
+  Tabs, 
+  TabsContent, 
+  TabsList, 
+  TabsTrigger 
+} from '@/components/ui/tabs';
 import NavigationBar from '@/components/ui/NavigationBar';
 import BottomTabs from '@/components/ui/BottomTabs';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,11 +19,16 @@ import StatusFilter from '@/components/broker-dashboard/StatusFilter';
 import ViewToggle from '@/components/broker-dashboard/ViewToggle';
 import AddListingButton from '@/components/broker-dashboard/AddListingButton';
 import ListingsSection from '@/components/broker-dashboard/ListingsSection';
+import BrokerProfile from '@/components/broker-dashboard/BrokerProfile';
+import BrokerMessages from '@/components/broker-dashboard/BrokerMessages';
+import BrokerOrders from '@/components/broker-dashboard/BrokerOrders';
 import { Listing } from '@/types/listing';
+import { User, ListFilter, MessageSquare, ShoppingBag, UserCircle } from 'lucide-react';
 
 const BrokerDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState('listings');
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'pending' | 'sold'>('all');
@@ -75,55 +86,88 @@ const BrokerDashboard = () => {
       <NavigationBar title="Broker Dashboard" />
       
       <main className="px-4 pb-4">
-        <div className="pt-4 space-y-4">
-          {/* Dashboard Stats */}
-          <DashboardStats listings={mockListings} />
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-4">
+          <TabsList className="grid grid-cols-4 mb-4">
+            <TabsTrigger value="listings" className="flex flex-col items-center py-2">
+              <ListFilter className="h-5 w-5 mb-1" />
+              <span className="text-xs">Listings</span>
+            </TabsTrigger>
+            <TabsTrigger value="messages" className="flex flex-col items-center py-2">
+              <MessageSquare className="h-5 w-5 mb-1" />
+              <span className="text-xs">Messages</span>
+            </TabsTrigger>
+            <TabsTrigger value="orders" className="flex flex-col items-center py-2">
+              <ShoppingBag className="h-5 w-5 mb-1" />
+              <span className="text-xs">Orders</span>
+            </TabsTrigger>
+            <TabsTrigger value="profile" className="flex flex-col items-center py-2">
+              <UserCircle className="h-5 w-5 mb-1" />
+              <span className="text-xs">Profile</span>
+            </TabsTrigger>
+          </TabsList>
           
-          {/* Toggle Detailed Stats Button */}
-          <button 
-            onClick={toggleDetailedStats}
-            className="w-full bg-dalali-50 text-dalali-800 py-2 rounded-lg font-medium text-sm border border-dalali-200 hover:bg-dalali-100 transition-colors"
-          >
-            {showDetailedStats ? 'Hide Detailed Analytics' : 'Show Detailed Analytics'}
-          </button>
-          
-          {/* Detailed Statistics (conditionally rendered) */}
-          {showDetailedStats && (
-            <BrokerStatistics listings={mockListings} />
-          )}
-          
-          {/* Search and Filters */}
-          <div className="flex flex-col space-y-3">
-            <SearchBar 
-              searchQuery={searchQuery} 
-              setSearchQuery={setSearchQuery} 
-            />
+          <TabsContent value="listings" className="space-y-4">
+            {/* Dashboard Stats */}
+            <DashboardStats listings={mockListings} />
             
-            <div className="flex justify-between items-center">
-              <StatusFilter 
-                filterStatus={filterStatus} 
-                setFilterStatus={setFilterStatus} 
+            {/* Toggle Detailed Stats Button */}
+            <button 
+              onClick={toggleDetailedStats}
+              className="w-full bg-dalali-50 text-dalali-800 py-2 rounded-lg font-medium text-sm border border-dalali-200 hover:bg-dalali-100 transition-colors"
+            >
+              {showDetailedStats ? 'Hide Detailed Analytics' : 'Show Detailed Analytics'}
+            </button>
+            
+            {/* Detailed Statistics (conditionally rendered) */}
+            {showDetailedStats && (
+              <BrokerStatistics listings={mockListings} />
+            )}
+            
+            {/* Search and Filters */}
+            <div className="flex flex-col space-y-3">
+              <SearchBar 
+                searchQuery={searchQuery} 
+                setSearchQuery={setSearchQuery} 
               />
               
-              <ViewToggle 
-                view={view} 
-                setView={setView} 
-              />
+              <div className="flex justify-between items-center">
+                <StatusFilter 
+                  filterStatus={filterStatus} 
+                  setFilterStatus={setFilterStatus} 
+                />
+                
+                <ViewToggle 
+                  view={view} 
+                  setView={setView} 
+                />
+              </div>
             </div>
-          </div>
+            
+            {/* Add New Listing Button */}
+            <AddListingButton onAddListing={handleAddListing} />
+            
+            {/* Listings */}
+            <ListingsSection 
+              listings={filteredListings}
+              view={view}
+              onEdit={handleEditListing}
+              onShare={handleShareListing}
+              onDelete={handleDeleteListing}
+            />
+          </TabsContent>
           
-          {/* Add New Listing Button */}
-          <AddListingButton onAddListing={handleAddListing} />
+          <TabsContent value="messages">
+            <BrokerMessages />
+          </TabsContent>
           
-          {/* Listings */}
-          <ListingsSection 
-            listings={filteredListings}
-            view={view}
-            onEdit={handleEditListing}
-            onShare={handleShareListing}
-            onDelete={handleDeleteListing}
-          />
-        </div>
+          <TabsContent value="orders">
+            <BrokerOrders />
+          </TabsContent>
+          
+          <TabsContent value="profile">
+            <BrokerProfile />
+          </TabsContent>
+        </Tabs>
       </main>
       
       <BottomTabs />

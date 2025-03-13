@@ -30,6 +30,10 @@ const BecomeBroker = () => {
     }
     setIsRegistering(true);
   };
+  
+  const handleBack = () => {
+    setIsRegistering(false);
+  };
 
   const handleSubmitRegistration = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,7 +73,7 @@ const BecomeBroker = () => {
             </div>
           </>
         ) : (
-          <RegistrationForm onSubmit={handleSubmitRegistration} />
+          <RegistrationForm onSubmit={handleSubmitRegistration} onBack={handleBack} />
         )}
       </main>
       

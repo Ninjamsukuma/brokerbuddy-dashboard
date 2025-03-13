@@ -16,6 +16,13 @@ const VerificationSection: React.FC = () => {
         placeholder="For verification purposes"
       />
       
+      <FormInput
+        name="phoneVerification"
+        label="Phone Number for Verification"
+        placeholder="e.g. +255712345678"
+        type="tel"
+      />
+      
       <FormCheckbox
         name="termsAccepted"
         label={t('becomeBroker.termsLabel')}

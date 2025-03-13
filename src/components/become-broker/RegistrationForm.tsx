@@ -4,10 +4,10 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
-// Import our new components
+// Import our form section components
 import ProfessionalInfoSection from './form/ProfessionalInfoSection';
 import ServiceInfoSection from './form/ServiceInfoSection';
 import VerificationSection from './form/VerificationSection';
@@ -22,6 +22,7 @@ const registrationFormSchema = z.object({
   serviceAreas: z.string().min(3, { message: "Please enter at least one service area" }),
   bio: z.string().min(20, { message: "Bio must be at least 20 characters" }),
   idNumber: z.string().min(5, { message: "ID number must be at least 5 characters" }),
+  phoneVerification: z.string().min(10, { message: "Please enter a valid phone number" }),
   termsAccepted: z.boolean().refine((val) => val === true, {
     message: "You must accept the terms and conditions",
   }),
@@ -31,9 +32,10 @@ type RegistrationFormValues = z.infer<typeof registrationFormSchema>;
 
 interface RegistrationFormProps {
   onSubmit: (e: React.FormEvent) => void;
+  onBack: () => void;
 }
 
-const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
+const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, onBack }) => {
   const { t } = useLanguage();
   
   const methods = useForm<RegistrationFormValues>({
@@ -45,6 +47,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
       serviceAreas: "",
       bio: "",
       idNumber: "",
+      phoneVerification: "",
       termsAccepted: false,
     },
   });
@@ -62,9 +65,19 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
   return (
     <section className="mt-4">
       <div className="bg-white rounded-xl p-5 shadow-sm mb-6">
-        <h2 className="text-xl font-semibold text-dalali-800 mb-4">
-          {t('becomeBroker.registration')}
-        </h2>
+        <div className="flex items-center mb-4">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={onBack} 
+            className="mr-2"
+          >
+            <ArrowLeft className="h-5 w-5 text-dalali-600" />
+          </Button>
+          <h2 className="text-xl font-semibold text-dalali-800">
+            {t('becomeBroker.registration')}
+          </h2>
+        </div>
         
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-6">
