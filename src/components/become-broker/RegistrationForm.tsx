@@ -67,20 +67,18 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
         </h2>
         
         <FormProvider {...methods}>
-          <Form>
-            <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-6">
-              <ProfessionalInfoSection />
-              <ServiceInfoSection />
-              <VerificationSection />
-              
-              <Button 
-                type="submit"
-                className="w-full bg-dalali-600 text-white py-3 rounded-lg font-semibold hover:bg-dalali-700 transition-colors"
-              >
-                {t('becomeBroker.submitRegistration')}
-              </Button>
-            </form>
-          </Form>
+          <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-6">
+            <ProfessionalInfoSection />
+            <ServiceInfoSection />
+            <VerificationSection />
+            
+            <Button 
+              type="submit"
+              className="w-full bg-dalali-600 text-white py-3 rounded-lg font-semibold hover:bg-dalali-700 transition-colors"
+            >
+              {t('becomeBroker.submitRegistration')}
+            </Button>
+          </form>
         </FormProvider>
       </div>
     </section>
