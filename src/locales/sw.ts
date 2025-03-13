@@ -1,4 +1,3 @@
-
 export const swTranslations = {
   // App name and general
   'appName': 'Dalali Kiganjani',
@@ -49,6 +48,15 @@ export const swTranslations = {
   'becomeBroker.howItWorks': 'Jinsi Inavyofanya Kazi',
   'becomeBroker.testimonials': 'Madalali Wetu Wanasema Nini',
   'becomeBroker.cta': 'Uko Tayari Kuanza Kupata?',
+  'becomeBroker.registration': 'Kamilisha Usajili Wako wa Dalali',
+  'becomeBroker.validation.required': 'Sehemu hii inahitajika',
+  'becomeBroker.validation.title': 'Kichwa lazima kiwe na angalau herufi 3',
+  'becomeBroker.validation.specialization': 'Tafadhali chagua utaalamu',
+  'becomeBroker.validation.experience': 'Tafadhali ingiza namba halali',
+  'becomeBroker.validation.serviceAreas': 'Tafadhali ingiza angalau eneo moja la huduma',
+  'becomeBroker.validation.bio': 'Wasifu lazima uwe na angalau herufi 20',
+  'becomeBroker.validation.idNumber': 'Namba ya kitambulisho lazima iwe na angalau herufi 5',
+  'becomeBroker.validation.terms': 'Lazima ukubali masharti na masharti',
   
   // Broker Dashboard
   'brokerDashboard.title': 'Dashibodi ya Dalali',

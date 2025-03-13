@@ -1,4 +1,3 @@
-
 export const enTranslations = {
   // App name and general
   'appName': 'Dalali Kiganjani',
@@ -49,6 +48,15 @@ export const enTranslations = {
   'becomeBroker.howItWorks': 'How It Works',
   'becomeBroker.testimonials': 'What Our Brokers Say',
   'becomeBroker.cta': 'Ready to Start Earning?',
+  'becomeBroker.registration': 'Complete Your Broker Registration',
+  'becomeBroker.validation.required': 'This field is required',
+  'becomeBroker.validation.title': 'Title must be at least 3 characters',
+  'becomeBroker.validation.specialization': 'Please select a specialization',
+  'becomeBroker.validation.experience': 'Please enter a valid number',
+  'becomeBroker.validation.serviceAreas': 'Please enter at least one service area',
+  'becomeBroker.validation.bio': 'Bio must be at least 20 characters',
+  'becomeBroker.validation.idNumber': 'ID number must be at least 5 characters',
+  'becomeBroker.validation.terms': 'You must accept the terms and conditions',
   
   // Broker Dashboard
   'brokerDashboard.title': 'Broker Dashboard',
