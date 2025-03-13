@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { 
@@ -13,7 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Star, ChevronDown, ChevronUp, MapPin, Calendar, DollarSign } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 
-// Mock orders data
+type OrderStatus = 'completed' | 'in-progress' | 'pending' | 'cancelled';
+
 const mockOrders = [
   {
     id: 'ord-001',
@@ -27,7 +27,7 @@ const mockOrders = [
       price: '500,000 TZS/month',
       location: 'Kinondoni, Dar es Salaam',
     },
-    status: 'completed',
+    status: 'completed' as OrderStatus,
     date: '2023-10-15',
     commission: '250,000 TZS',
     rating: 5,
@@ -45,7 +45,7 @@ const mockOrders = [
       price: '45,000,000 TZS',
       location: 'Mikocheni, Dar es Salaam',
     },
-    status: 'in-progress',
+    status: 'in-progress' as OrderStatus,
     date: '2023-11-05',
     commission: 'Pending',
     rating: null,
@@ -63,7 +63,7 @@ const mockOrders = [
       price: '2,500,000 TZS/month',
       location: 'CBD, Dar es Salaam',
     },
-    status: 'pending',
+    status: 'pending' as OrderStatus,
     date: '2023-11-10',
     commission: 'Pending',
     rating: null,
@@ -81,7 +81,7 @@ const mockOrders = [
       price: '150,000,000 TZS',
       location: 'Mbezi Beach, Dar es Salaam',
     },
-    status: 'completed',
+    status: 'completed' as OrderStatus,
     date: '2023-09-20',
     commission: '7,500,000 TZS',
     rating: 4,
@@ -99,15 +99,13 @@ const mockOrders = [
       price: '35,000,000 TZS',
       location: 'Masaki, Dar es Salaam',
     },
-    status: 'completed',
+    status: 'completed' as OrderStatus,
     date: '2023-10-05',
     commission: '1,750,000 TZS',
     rating: 3,
     review: 'Good service but took longer than expected.',
   }
 ];
-
-type OrderStatus = 'completed' | 'in-progress' | 'pending' | 'cancelled';
 
 const OrderStatusBadge = ({ status }: { status: OrderStatus }) => {
   const statusConfig = {
@@ -147,7 +145,7 @@ const RatingStars = ({ rating }: { rating: number | null }) => {
 
 const BrokerOrders = () => {
   const { t } = useLanguage();
-  const [activeTab, setActiveTab] = useState<'all' | 'completed' | 'in-progress' | 'pending'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | OrderStatus>('all');
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
   const filteredOrders = activeTab === 'all'
