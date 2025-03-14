@@ -23,7 +23,8 @@ import BrokerProfile from '@/components/broker-dashboard/BrokerProfile';
 import BrokerMessages from '@/components/broker-dashboard/BrokerMessages';
 import BrokerOrders from '@/components/broker-dashboard/BrokerOrders';
 import { Listing } from '@/types/listing';
-import { User, ListFilter, MessageSquare, ShoppingBag, UserCircle } from 'lucide-react';
+import { User, ListFilter, MessageSquare, ShoppingBag, UserCircle, Share2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const BrokerDashboard = () => {
   const navigate = useNavigate();
@@ -70,16 +71,31 @@ const BrokerDashboard = () => {
   };
   
   const handleShareListing = (id: string) => {
-    toast({
-      title: "Share listing",
-      description: `Sharing listing ${id}`,
-      duration: 3000,
-    });
+    navigate('/marketing-materials');
   };
   
   const toggleDetailedStats = () => {
     setShowDetailedStats(!showDetailedStats);
   };
+  
+  // Check if user is a broker
+  React.useEffect(() => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to access the broker dashboard",
+        duration: 3000,
+      });
+      navigate('/login');
+    } else if (user.role !== 'broker') {
+      toast({
+        title: "Broker Access Only",
+        description: "This dashboard is only available to brokers",
+        duration: 3000,
+      });
+      navigate('/become-broker');
+    }
+  }, [user, navigate]);
   
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -107,6 +123,15 @@ const BrokerDashboard = () => {
           </TabsList>
           
           <TabsContent value="listings" className="space-y-4">
+            {/* Marketing Materials Button */}
+            <Button 
+              onClick={() => navigate('/marketing-materials')}
+              className="w-full flex items-center justify-center bg-dalali-50 text-dalali-800 py-2 rounded-lg font-medium text-sm border border-dalali-200 hover:bg-dalali-100 transition-colors"
+            >
+              <Share2 size={16} className="mr-2" />
+              Create & Share Marketing Materials
+            </Button>
+            
             {/* Dashboard Stats */}
             <DashboardStats listings={mockListings} />
             

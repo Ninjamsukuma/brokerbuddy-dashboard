@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavigationBar from '@/components/ui/NavigationBar';
 import BottomTabs from '@/components/ui/BottomTabs';
@@ -12,11 +12,20 @@ import HowItWorksSection from '@/components/become-broker/HowItWorksSection';
 import TestimonialSection from '@/components/become-broker/TestimonialSection';
 import RegistrationForm from '@/components/become-broker/RegistrationForm';
 import CTASection from '@/components/become-broker/CTASection';
+import { Button } from '@/components/ui/button';
+import { LockKeyhole, User } from 'lucide-react';
 
 const BecomeBroker = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [isRegistering, setIsRegistering] = useState(false);
+
+  // Redirect to broker dashboard if user is a broker
+  useEffect(() => {
+    if (user?.role === 'broker') {
+      navigate('/broker-dashboard');
+    }
+  }, [user, navigate]);
 
   const handleRegister = () => {
     if (!user) {
@@ -25,7 +34,7 @@ const BecomeBroker = () => {
         description: "Please log in or create an account to become a broker",
         duration: 3000,
       });
-      navigate('/signup');
+      // Don't navigate away, show login options instead
       return;
     }
     setIsRegistering(true);
@@ -45,11 +54,43 @@ const BecomeBroker = () => {
     navigate('/broker-dashboard');
   };
 
+  const navigateToLogin = () => {
+    navigate('/login');
+  };
+
+  const navigateToSignup = () => {
+    navigate('/signup');
+  };
+
   return (
     <div className="min-h-screen bg-background pb-20">
       <NavigationBar title="Become a Broker" showSearch={false} />
       
       <main className="px-4 pb-4">
+        {!user && (
+          <div className="bg-white p-4 rounded-xl shadow-sm mb-4">
+            <h2 className="text-lg font-semibold text-dalali-800 mb-3">Sign in to continue</h2>
+            <p className="text-gray-600 text-sm mb-4">Please log in or create an account to become a broker</p>
+            <div className="flex gap-3">
+              <Button 
+                onClick={navigateToLogin} 
+                className="flex-1 bg-dalali-600 hover:bg-dalali-700"
+              >
+                <LockKeyhole size={16} className="mr-2" />
+                Login
+              </Button>
+              <Button 
+                onClick={navigateToSignup} 
+                variant="outline" 
+                className="flex-1 border-dalali-600 text-dalali-600 hover:bg-dalali-50"
+              >
+                <User size={16} className="mr-2" />
+                Sign Up
+              </Button>
+            </div>
+          </div>
+        )}
+        
         {!isRegistering ? (
           <>
             <HeroSection onRegister={handleRegister} />

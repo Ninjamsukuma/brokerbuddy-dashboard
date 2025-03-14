@@ -21,6 +21,7 @@ interface AuthContextType {
   signup: (userData: SignupData) => Promise<void>;
   logout: () => void;
   clearError: () => void;
+  updateUserRole: (role: UserRole) => Promise<void>;
 }
 
 interface SignupData {
@@ -130,6 +131,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateUserRole = async (role: UserRole) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      if (!user) {
+        throw new Error('No user logged in');
+      }
+      
+      // This would be a real API call in production
+      // const response = await axios.put('/api/auth/update-role', { role }, {
+      //   headers: { Authorization: `Bearer ${user.token}` }
+      // });
+      
+      // Mock update for development
+      const updatedUser: AuthUser = {
+        ...user,
+        role: role
+      };
+      
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      return Promise.resolve();
+    } catch (err) {
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : 'An error occurred updating user role';
+      setError(errorMessage);
+      
+      return Promise.reject(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
@@ -140,7 +177,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, signup, logout, clearError }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      error, 
+      login, 
+      signup, 
+      logout, 
+      clearError,
+      updateUserRole 
+    }}>
       {children}
     </AuthContext.Provider>
   );
