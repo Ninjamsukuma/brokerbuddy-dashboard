@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavigationBar from '@/components/ui/NavigationBar';
@@ -12,13 +13,28 @@ import TestimonialSection from '@/components/become-broker/TestimonialSection';
 import RegistrationForm from '@/components/become-broker/RegistrationForm';
 import CTASection from '@/components/become-broker/CTASection';
 import { Button } from '@/components/ui/button';
-import { LockKeyhole, User } from 'lucide-react';
+import { 
+  LockKeyhole, 
+  User, 
+  AlertCircle, 
+  CheckCircle 
+} from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const BecomeBroker = () => {
   const navigate = useNavigate();
   const { user, updateUserRole } = useAuth();
   const [isRegistering, setIsRegistering] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Redirect to broker dashboard if user is a broker
   useEffect(() => {
@@ -49,7 +65,42 @@ const BecomeBroker = () => {
       // Don't navigate away, show login options instead
       return;
     }
+    
+    // If user is already logged in but not a broker, show confirmation dialog
+    if (user.role === 'client') {
+      setShowConfirmDialog(true);
+      return;
+    }
+    
     setIsRegistering(true);
+  };
+  
+  const handleConfirmRoleChange = async () => {
+    setIsProcessing(true);
+    try {
+      await updateUserRole('broker');
+      setShowConfirmDialog(false);
+      
+      toast({
+        title: "Role Updated",
+        description: "Your account has been upgraded to broker status. Redirecting to your dashboard.",
+        duration: 3000,
+      });
+      
+      // Add a small delay for the toast to be visible
+      setTimeout(() => {
+        navigate('/broker-dashboard');
+      }, 1500);
+    } catch (error) {
+      toast({
+        title: "Update Failed",
+        description: "There was an error updating your account. Please try again later.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
   
   const handleBack = () => {
@@ -88,7 +139,7 @@ const BecomeBroker = () => {
   };
 
   const navigateToSignup = () => {
-    navigate('/signup');
+    navigate('/signup', { state: { initialRole: 'broker' } });
   };
   
   // Show loading while redirecting
@@ -156,6 +207,68 @@ const BecomeBroker = () => {
           <RegistrationForm onSubmit={handleSubmitRegistration} onBack={handleBack} />
         )}
       </main>
+      
+      {/* Role Change Confirmation Dialog */}
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertCircle className="text-dalali-600 h-5 w-5" />
+              Switch to Broker Account
+            </DialogTitle>
+            <DialogDescription>
+              You are about to upgrade your account from client to broker. 
+              This will give you access to the broker dashboard and broker-specific features.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="flex items-start gap-3 mb-2 text-sm">
+              <CheckCircle className="text-green-500 h-5 w-5 mt-0.5" />
+              <div>
+                <p className="font-medium text-gray-800">List Properties</p>
+                <p className="text-gray-600">Add and manage property listings to be shown to clients</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 mb-2 text-sm">
+              <CheckCircle className="text-green-500 h-5 w-5 mt-0.5" />
+              <div>
+                <p className="font-medium text-gray-800">Generate Marketing Materials</p>
+                <p className="text-gray-600">Create social media ready content to promote your listings</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 text-sm">
+              <CheckCircle className="text-green-500 h-5 w-5 mt-0.5" />
+              <div>
+                <p className="font-medium text-gray-800">Receive Client Inquiries</p>
+                <p className="text-gray-600">Get direct messages and manage client communications</p>
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row sm:justify-between">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowConfirmDialog(false)}
+              disabled={isProcessing}
+            >
+              Cancel
+            </Button>
+            <Button 
+              className="bg-dalali-600 hover:bg-dalali-700" 
+              onClick={handleConfirmRoleChange}
+              disabled={isProcessing}
+            >
+              {isProcessing ? (
+                <>
+                  <span className="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent mr-2"></span>
+                  Processing...
+                </>
+              ) : (
+                'Confirm & Continue'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       
       <BottomTabs />
     </div>

@@ -53,12 +53,23 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ showMenu }) => {
           </div>
           <h3 className="font-medium text-lg">{user?.name || 'Guest User'}</h3>
           <p className="text-sm text-muted-foreground">{user?.phone || user?.email || 'Not logged in'}</p>
+          {user?.role === 'broker' && (
+            <span className="bg-dalali-100 text-dalali-800 text-xs px-2 py-1 rounded-full mt-1">
+              Broker
+            </span>
+          )}
         </div>
         
         <div className="mt-8 space-y-2">
           <div className="px-2 py-1">
             <h4 className="text-sm font-medium text-muted-foreground mb-3">{t('menu.main')}</h4>
             <div className="space-y-1">
+              <button 
+                className="w-full flex items-center px-3 py-2 text-sm rounded-md hover:bg-accent"
+                onClick={() => navigate('/')}
+              >
+                <span>Home</span>
+              </button>
               <button className="w-full flex items-center px-3 py-2 text-sm rounded-md hover:bg-accent">
                 <span>{t('menu.profile')}</span>
               </button>

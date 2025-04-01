@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Eye, EyeOff, User, Mail, Phone, Lock, Briefcase, UserCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -18,12 +17,32 @@ type SignupFormData = {
 
 const Signup = () => {
   const navigate = useNavigate();
-  const { signup, error, clearError } = useAuth();
+  const location = useLocation();
+  const { signup, error, clearError, user, getRedirectPath } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isEmail, setIsEmail] = useState(true);
   
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<SignupFormData>();
+  const initialRole = location.state?.initialRole || 'client';
+  
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<SignupFormData>({
+    defaultValues: {
+      role: initialRole
+    }
+  });
+  
   const password = watch('password', '');
+  
+  useEffect(() => {
+    if (location.state?.initialRole) {
+      setValue('role', location.state.initialRole);
+    }
+  }, [location.state, setValue]);
+  
+  useEffect(() => {
+    if (user) {
+      navigate(getRedirectPath());
+    }
+  }, [user, navigate, getRedirectPath]);
   
   const onSubmit = async (data: SignupFormData) => {
     try {
@@ -51,13 +70,12 @@ const Signup = () => {
         duration: 3000,
       });
       
-      navigate('/');
+      navigate(data.role === 'broker' ? '/broker-dashboard' : '/');
     } catch (err) {
       // Error is handled by the auth context
     }
   };
   
-  // Animation variants
   const formVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
@@ -66,6 +84,20 @@ const Signup = () => {
       transition: { duration: 0.5, ease: "easeOut" }
     }
   };
+  
+  if (user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="mb-4 text-dalali-600">
+            <p>You are already logged in.</p>
+            <p>Redirecting to {user.role === 'broker' ? 'broker dashboard' : 'home page'}...</p>
+          </div>
+          <div className="animate-spin h-8 w-8 border-4 border-dalali-600 rounded-full border-t-transparent mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-background py-12 px-4">
@@ -111,7 +143,6 @@ const Signup = () => {
           </div>
           
           <form onSubmit={handleSubmit(onSubmit)}>
-            {/* Name Field */}
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Full Name</label>
               <div className="relative">
@@ -133,7 +164,6 @@ const Signup = () => {
               )}
             </div>
             
-            {/* Email/Phone Field */}
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">
                 {isEmail ? 'Email' : 'Phone Number'}
@@ -171,7 +201,6 @@ const Signup = () => {
               )}
             </div>
             
-            {/* Password Field */}
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Password</label>
               <div className="relative">
@@ -200,7 +229,6 @@ const Signup = () => {
               )}
             </div>
             
-            {/* Confirm Password Field */}
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Confirm Password</label>
               <div className="relative">
@@ -222,7 +250,6 @@ const Signup = () => {
               )}
             </div>
             
-            {/* Role Selection */}
             <div className="mb-6">
               <label className="block text-gray-700 mb-2">I am registering as a</label>
               <div className="grid grid-cols-2 gap-4">

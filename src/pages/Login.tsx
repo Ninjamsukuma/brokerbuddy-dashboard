@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -14,20 +15,20 @@ type LoginFormData = {
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, error, clearError, user } = useAuth();
+  const { login, error, clearError, user, getRedirectPath } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isEmail, setIsEmail] = useState(true);
   
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
   
-  const returnUrl = location.state?.returnUrl || '/';
+  const returnUrl = location.state?.returnUrl || getRedirectPath();
   
   useEffect(() => {
     if (user) {
-      const redirectPath = user.role === 'broker' ? '/broker-dashboard' : '/';
-      navigate(redirectPath);
+      // Use the helper function to determine where to redirect based on role
+      navigate(returnUrl);
     }
-  }, [user, navigate]);
+  }, [user, navigate, returnUrl]);
   
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -38,6 +39,7 @@ const Login = () => {
         duration: 3000,
       });
     } catch (err) {
+      // Error is handled by the auth context
     }
   };
   
@@ -56,7 +58,7 @@ const Login = () => {
         <div className="text-center">
           <div className="mb-4 text-dalali-600">
             <p>You are already logged in.</p>
-            <p>Redirecting...</p>
+            <p>Redirecting to {user.role === 'broker' ? 'broker dashboard' : 'home page'}...</p>
           </div>
           <div className="animate-spin h-8 w-8 border-4 border-dalali-600 rounded-full border-t-transparent mx-auto"></div>
         </div>

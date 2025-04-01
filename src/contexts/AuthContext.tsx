@@ -22,6 +22,7 @@ interface AuthContextType {
   logout: () => void;
   clearError: () => void;
   updateUserRole: (role: UserRole) => Promise<void>;
+  getRedirectPath: () => string;
 }
 
 interface SignupData {
@@ -176,6 +177,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
   };
 
+  // Helper function to get appropriate redirect path based on user role
+  const getRedirectPath = () => {
+    if (!user) return '/login';
+    return user.role === 'broker' ? '/broker-dashboard' : '/';
+  };
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -185,7 +192,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       signup, 
       logout, 
       clearError,
-      updateUserRole 
+      updateUserRole,
+      getRedirectPath
     }}>
       {children}
     </AuthContext.Provider>
