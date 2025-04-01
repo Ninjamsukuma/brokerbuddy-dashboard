@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, Briefcase } from 'lucide-react';
+import { Menu, Briefcase, LayoutDashboard } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Sheet,
   SheetContent,
@@ -18,9 +19,14 @@ interface SidebarMenuProps {
 const SidebarMenu: React.FC<SidebarMenuProps> = ({ showMenu }) => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { user } = useAuth();
 
   const navigateToBecomeABroker = () => {
     navigate('/become-broker');
+  };
+  
+  const navigateToBrokerDashboard = () => {
+    navigate('/broker-dashboard');
   };
 
   if (!showMenu) return null;
@@ -45,8 +51,8 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ showMenu }) => {
               className="h-full w-full object-cover"
             />
           </div>
-          <h3 className="font-medium text-lg">Samwel Johnson</h3>
-          <p className="text-sm text-muted-foreground">+255 712 345 678</p>
+          <h3 className="font-medium text-lg">{user?.name || 'Guest User'}</h3>
+          <p className="text-sm text-muted-foreground">{user?.phone || user?.email || 'Not logged in'}</p>
         </div>
         
         <div className="mt-8 space-y-2">
@@ -62,16 +68,30 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ showMenu }) => {
               <button className="w-full flex items-center px-3 py-2 text-sm rounded-md hover:bg-accent">
                 <span>{t('menu.location')}</span>
               </button>
-              <button 
-                className="w-full flex items-center px-3 py-2 text-sm rounded-md bg-dalali-50 text-dalali-600 hover:bg-dalali-100"
-                onClick={navigateToBecomeABroker}
-              >
-                <Briefcase size={18} className="mr-2 text-dalali-600" />
-                <div className="flex flex-col items-start">
-                  <span className="font-medium">Become a Broker</span>
-                  <span className="text-xs text-gray-500">Earn money on your schedule</span>
-                </div>
-              </button>
+              
+              {user?.role === 'broker' ? (
+                <button 
+                  className="w-full flex items-center px-3 py-2 text-sm rounded-md bg-dalali-50 text-dalali-600 hover:bg-dalali-100"
+                  onClick={navigateToBrokerDashboard}
+                >
+                  <LayoutDashboard size={18} className="mr-2 text-dalali-600" />
+                  <div className="flex flex-col items-start">
+                    <span className="font-medium">Broker Dashboard</span>
+                    <span className="text-xs text-gray-500">Manage your listings</span>
+                  </div>
+                </button>
+              ) : (
+                <button 
+                  className="w-full flex items-center px-3 py-2 text-sm rounded-md bg-dalali-50 text-dalali-600 hover:bg-dalali-100"
+                  onClick={navigateToBecomeABroker}
+                >
+                  <Briefcase size={18} className="mr-2 text-dalali-600" />
+                  <div className="flex flex-col items-start">
+                    <span className="font-medium">Become a Broker</span>
+                    <span className="text-xs text-gray-500">Earn money on your schedule</span>
+                  </div>
+                </button>
+              )}
             </div>
           </div>
         </div>

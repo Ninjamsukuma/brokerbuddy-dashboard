@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Eye, EyeOff, Mail, Phone, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -14,11 +13,21 @@ type LoginFormData = {
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login, error, clearError } = useAuth();
+  const location = useLocation();
+  const { login, error, clearError, user } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isEmail, setIsEmail] = useState(true);
   
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
+  
+  const returnUrl = location.state?.returnUrl || '/';
+  
+  useEffect(() => {
+    if (user) {
+      const redirectPath = user.role === 'broker' ? '/broker-dashboard' : '/';
+      navigate(redirectPath);
+    }
+  }, [user, navigate]);
   
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -28,13 +37,10 @@ const Login = () => {
         description: "Welcome back!",
         duration: 3000,
       });
-      navigate('/');
     } catch (err) {
-      // Error is handled by the auth context
     }
   };
   
-  // Animation variants
   const formVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
@@ -43,6 +49,20 @@ const Login = () => {
       transition: { duration: 0.5, ease: "easeOut" }
     }
   };
+  
+  if (user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="mb-4 text-dalali-600">
+            <p>You are already logged in.</p>
+            <p>Redirecting...</p>
+          </div>
+          <div className="animate-spin h-8 w-8 border-4 border-dalali-600 rounded-full border-t-transparent mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-background p-4">

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Tabs, 
@@ -34,6 +34,7 @@ const BrokerDashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'pending' | 'sold'>('all');
   const [showDetailedStats, setShowDetailedStats] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Simple filtering logic
   const filteredListings = mockListings.filter(listing => {
@@ -45,6 +46,15 @@ const BrokerDashboard = () => {
     
     return matchesSearch && matchesStatus;
   });
+  
+  useEffect(() => {
+    // Add a small delay to simulate loading and avoid flash of content
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   const handleAddListing = () => {
     toast({
@@ -79,14 +89,14 @@ const BrokerDashboard = () => {
   };
   
   // Check if user is a broker
-  React.useEffect(() => {
+  useEffect(() => {
     if (!user) {
       toast({
         title: "Authentication Required",
         description: "Please log in to access the broker dashboard",
         duration: 3000,
       });
-      navigate('/login');
+      navigate('/login', { state: { returnUrl: '/broker-dashboard' } });
     } else if (user.role !== 'broker') {
       toast({
         title: "Broker Access Only",
@@ -96,6 +106,21 @@ const BrokerDashboard = () => {
       navigate('/become-broker');
     }
   }, [user, navigate]);
+  
+  // Show loading state or redirect if not a broker
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse text-dalali-600">Loading broker dashboard...</div>
+      </div>
+    );
+  }
+  
+  // If user is not authenticated or not a broker, the useEffect above will handle redirection
+  // This is just a safety check
+  if (!user || user.role !== 'broker') {
+    return null;
+  }
   
   return (
     <div className="min-h-screen bg-background pb-20">

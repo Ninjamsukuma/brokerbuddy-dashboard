@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavigationBar from '@/components/ui/NavigationBar';
@@ -17,13 +16,26 @@ import { LockKeyhole, User } from 'lucide-react';
 
 const BecomeBroker = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, updateUserRole } = useAuth();
   const [isRegistering, setIsRegistering] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   // Redirect to broker dashboard if user is a broker
   useEffect(() => {
     if (user?.role === 'broker') {
-      navigate('/broker-dashboard');
+      setIsRedirecting(true);
+      toast({
+        title: "Broker Access",
+        description: "You are already registered as a broker. Redirecting to your dashboard.",
+        duration: 3000,
+      });
+      
+      // Add a small delay for the toast to be visible
+      const timer = setTimeout(() => {
+        navigate('/broker-dashboard');
+      }, 1500);
+      
+      return () => clearTimeout(timer);
     }
   }, [user, navigate]);
 
@@ -44,23 +56,50 @@ const BecomeBroker = () => {
     setIsRegistering(false);
   };
 
-  const handleSubmitRegistration = (e: React.FormEvent) => {
+  const handleSubmitRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Registration Successful",
-      description: "Your broker application has been submitted for review",
-      duration: 3000,
-    });
-    navigate('/broker-dashboard');
+    
+    try {
+      // Update user role to broker
+      await updateUserRole('broker');
+      
+      toast({
+        title: "Registration Successful",
+        description: "Your broker application has been approved. Welcome to Dalali Kiganjani broker community!",
+        duration: 3000,
+      });
+      
+      // Add a small delay for the toast to be visible
+      setTimeout(() => {
+        navigate('/broker-dashboard');
+      }, 1500);
+    } catch (error) {
+      toast({
+        title: "Registration Failed",
+        description: "There was an error updating your account. Please try again later.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
   };
 
   const navigateToLogin = () => {
-    navigate('/login');
+    navigate('/login', { state: { returnUrl: '/become-broker' } });
   };
 
   const navigateToSignup = () => {
     navigate('/signup');
   };
+  
+  // Show loading while redirecting
+  if (isRedirecting) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+        <div className="text-dalali-600 mb-4">You are already a broker. Redirecting to dashboard...</div>
+        <div className="animate-spin h-8 w-8 border-4 border-dalali-600 rounded-full border-t-transparent"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-20">
