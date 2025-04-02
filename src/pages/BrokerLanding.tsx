@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/components/ui/use-toast';
 import { mockListings } from '@/data/mockListings';
 import { Button } from '@/components/ui/button';
+import { Listing } from '@/types/listing';
 
 const BrokerLanding = () => {
   const navigate = useNavigate();
@@ -71,6 +72,28 @@ const BrokerLanding = () => {
           </div>
         </div>
         
+        {/* Broker Profile Summary */}
+        <div className="mb-6 bg-white rounded-xl shadow-sm p-4">
+          <div className="flex items-center">
+            <div className="h-14 w-14 rounded-full overflow-hidden mr-3 bg-dalali-100">
+              {user.avatar ? (
+                <img src={user.avatar} alt={user.name} className="h-full w-full object-cover" />
+              ) : (
+                <div className="h-full w-full flex items-center justify-center bg-dalali-200 text-dalali-600 font-bold text-xl">
+                  {user.name && user.name.charAt(0).toUpperCase()}
+                </div>
+              )}
+            </div>
+            <div>
+              <h3 className="font-medium text-dalali-800">{user.name || 'Broker'}</h3>
+              <p className="text-sm text-gray-600">{user.email || user.phone || 'Contact information not available'}</p>
+              <span className="inline-block mt-1 text-xs bg-dalali-100 text-dalali-700 px-2 py-0.5 rounded-full">
+                Broker
+              </span>
+            </div>
+          </div>
+        </div>
+        
         {/* Quick Actions */}
         <div className="grid grid-cols-4 gap-2 mb-6">
           <button 
@@ -108,7 +131,7 @@ const BrokerLanding = () => {
           <h2 className="text-lg font-semibold text-dalali-800 mb-3">Market Activity</h2>
           <div className="bg-white rounded-xl shadow-sm p-4">
             <div className="space-y-4">
-              {mockListings.slice(0, 3).map((listing) => (
+              {mockListings.slice(0, 3).map((listing: Listing) => (
                 <div key={listing.id} className="flex border-b pb-3 last:border-0 last:pb-0">
                   <div className="h-14 w-14 rounded-md overflow-hidden mr-3">
                     <img 
