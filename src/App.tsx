@@ -18,6 +18,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import BrokerDashboard from "./pages/BrokerDashboard";
 import BecomeBroker from "./pages/BecomeBroker";
+import BrokerLanding from "./pages/BrokerLanding";
 import MarketingMaterials from "./pages/MarketingMaterials";
 import NotFound from "./pages/NotFound";
 
@@ -68,6 +69,7 @@ const App = () => {
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/broker-dashboard" element={<BrokerDashboard />} />
                     <Route path="/become-broker" element={<BecomeBroker />} />
+                    <Route path="/broker-landing" element={<BrokerLanding />} />
                     <Route path="/marketing-materials" element={<MarketingMaterials />} />
                     
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

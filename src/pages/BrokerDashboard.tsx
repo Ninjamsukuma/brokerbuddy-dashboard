@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { 
   Tabs, 
   TabsContent, 
@@ -22,13 +22,13 @@ import ListingsSection from '@/components/broker-dashboard/ListingsSection';
 import BrokerProfile from '@/components/broker-dashboard/BrokerProfile';
 import BrokerMessages from '@/components/broker-dashboard/BrokerMessages';
 import BrokerOrders from '@/components/broker-dashboard/BrokerOrders';
-import { Listing } from '@/types/listing';
-import { User, ListFilter, MessageSquare, ShoppingBag, UserCircle, Share2 } from 'lucide-react';
+import { User, ListFilter, MessageSquare, ShoppingBag, UserCircle, Share2, LogOut, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const BrokerDashboard = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('listings');
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
@@ -36,6 +36,14 @@ const BrokerDashboard = () => {
   const [showDetailedStats, setShowDetailedStats] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   
+  // Set active tab from URL parameter if available
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && ['listings', 'messages', 'orders', 'profile'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
+
   // Simple filtering logic
   const filteredListings = mockListings.filter(listing => {
     const matchesSearch = listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -88,6 +96,20 @@ const BrokerDashboard = () => {
     setShowDetailedStats(!showDetailedStats);
   };
   
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    toast({
+      title: "Logged Out",
+      description: "You have been logged out successfully",
+      duration: 3000,
+    });
+  };
+
+  const navigateToBrokerLanding = () => {
+    navigate('/broker-landing');
+  };
+  
   // Check if user is a broker
   useEffect(() => {
     if (!user) {
@@ -127,7 +149,30 @@ const BrokerDashboard = () => {
       <NavigationBar title="Broker Dashboard" />
       
       <main className="px-4 pb-4">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-4">
+        {/* Quick action buttons */}
+        <div className="flex justify-between mt-4 mb-3">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex items-center border-dalali-200 text-dalali-800"
+            onClick={navigateToBrokerLanding}
+          >
+            <Home size={16} className="mr-1" />
+            Broker Portal
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex items-center border-red-200 text-red-600 hover:bg-red-50"
+            onClick={handleLogout}
+          >
+            <LogOut size={16} className="mr-1" />
+            Logout
+          </Button>
+        </div>
+        
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-1">
           <TabsList className="grid grid-cols-4 mb-4">
             <TabsTrigger value="listings" className="flex flex-col items-center py-2">
               <ListFilter className="h-5 w-5 mb-1" />

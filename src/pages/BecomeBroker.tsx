@@ -36,7 +36,7 @@ const BecomeBroker = () => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Redirect to broker dashboard if user is a broker
+  // Redirect to broker landing if user is a broker
   useEffect(() => {
     if (user?.role === 'broker') {
       setIsRedirecting(true);
@@ -48,7 +48,7 @@ const BecomeBroker = () => {
       
       // Add a small delay for the toast to be visible
       const timer = setTimeout(() => {
-        navigate('/broker-dashboard');
+        navigate('/broker-landing');
       }, 1500);
       
       return () => clearTimeout(timer);
@@ -89,7 +89,7 @@ const BecomeBroker = () => {
       
       // Add a small delay for the toast to be visible
       setTimeout(() => {
-        navigate('/broker-dashboard');
+        navigate('/broker-landing');
       }, 1500);
     } catch (error) {
       toast({
@@ -122,7 +122,7 @@ const BecomeBroker = () => {
       
       // Add a small delay for the toast to be visible
       setTimeout(() => {
-        navigate('/broker-dashboard');
+        navigate('/broker-landing');
       }, 1500);
     } catch (error) {
       toast({
@@ -146,7 +146,7 @@ const BecomeBroker = () => {
   if (isRedirecting) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-        <div className="text-dalali-600 mb-4">You are already a broker. Redirecting to dashboard...</div>
+        <div className="text-dalali-600 mb-4">You are already a broker. Redirecting to broker portal...</div>
         <div className="animate-spin h-8 w-8 border-4 border-dalali-600 rounded-full border-t-transparent"></div>
       </div>
     );
