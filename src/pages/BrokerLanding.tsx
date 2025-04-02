@@ -112,7 +112,7 @@ const BrokerLanding = () => {
                 <div key={listing.id} className="flex border-b pb-3 last:border-0 last:pb-0">
                   <div className="h-14 w-14 rounded-md overflow-hidden mr-3">
                     <img 
-                      src={listing.images[0]} 
+                      src={listing.image} 
                       alt={listing.title} 
                       className="h-full w-full object-cover"
                     />
@@ -128,7 +128,7 @@ const BrokerLanding = () => {
                         {listing.status === 'sold' ? 'Sold' : 'Available'}
                       </span>
                       <span className="text-xs bg-dalali-50 text-dalali-800 px-2 py-0.5 rounded-full">
-                        {listing.price}
+                        {listing.price.toLocaleString()}
                       </span>
                     </div>
                   </div>
