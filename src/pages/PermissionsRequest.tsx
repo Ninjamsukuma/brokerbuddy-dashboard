@@ -40,7 +40,7 @@ const PermissionsRequest = () => {
       description: 'Used for updates and promotional offers',
       icon: <Bell className="h-6 w-6 text-dalali-600" />,
       required: true,
-      explanation: 'Notifications keep you informed about new messages from brokers, updates on property listings you're interested in, and occasional promotional offers that might interest you.'
+      explanation: 'Notifications keep you informed about new messages from brokers, updates on property listings you\'re interested in, and occasional promotional offers that might interest you.'
     },
     {
       id: 'contacts',
