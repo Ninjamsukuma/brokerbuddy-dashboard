@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavigationBar from '@/components/ui/NavigationBar';
@@ -14,7 +13,6 @@ const BrokerLanding = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   
-  // Verify user is a broker
   useEffect(() => {
     if (!user) {
       toast({

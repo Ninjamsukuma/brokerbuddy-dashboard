@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -11,6 +10,15 @@ interface AuthUser {
   phone?: string;
   role: UserRole;
   token: string;
+  avatar?: string;
+}
+
+interface SignupData {
+  name: string;
+  email?: string;
+  phone?: string;
+  password: string;
+  role: UserRole;
 }
 
 interface AuthContextType {
@@ -25,14 +33,6 @@ interface AuthContextType {
   getRedirectPath: () => string;
 }
 
-interface SignupData {
-  name: string;
-  email?: string;
-  phone?: string;
-  password: string;
-  role: UserRole;
-}
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -40,7 +40,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Check if user is logged in from localStorage on initial load
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -58,11 +57,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     setError(null);
     try {
-      // This would be a real API call in production
-      // const response = await axios.post('/api/auth/login', { identifier, password });
-      
-      // Mock login for development
-      // In production, this would be replaced with an actual API call
       const mockResponse = {
         data: {
           user: {
@@ -71,6 +65,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             email: identifier.includes('@') ? identifier : undefined,
             phone: !identifier.includes('@') ? identifier : undefined,
             role: 'client' as UserRole,
+            avatar: undefined,
           },
           token: 'mock-jwt-token'
         }
@@ -97,11 +92,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     setError(null);
     try {
-      // This would be a real API call in production
-      // const response = await axios.post('/api/auth/signup', userData);
-      
-      // Mock signup for development
-      // In production, this would be replaced with an actual API call
       const mockResponse = {
         data: {
           user: {
@@ -110,6 +100,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             email: userData.email,
             phone: userData.phone,
             role: userData.role,
+            avatar: undefined,
           },
           token: 'mock-jwt-token'
         }
@@ -141,12 +132,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error('No user logged in');
       }
       
-      // This would be a real API call in production
-      // const response = await axios.put('/api/auth/update-role', { role }, {
-      //   headers: { Authorization: `Bearer ${user.token}` }
-      // });
-      
-      // Mock update for development
       const updatedUser: AuthUser = {
         ...user,
         role: role
@@ -177,7 +162,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
   };
 
-  // Helper function to get appropriate redirect path based on user role
   const getRedirectPath = () => {
     if (!user) return '/login';
     return user.role === 'broker' ? '/broker-dashboard' : '/';
