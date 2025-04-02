@@ -53,7 +53,7 @@ const PermissionsRequest = () => {
       name: 'Notification Access',
       description: 'Used for updates and promotional offers',
       icon: <Bell className="h-6 w-6 text-dalali-600" />,
-      required: true,
+      required: false, // Changed from true to false
       explanation: 'Notifications keep you informed about new messages from brokers, updates on property listings you\'re interested in, and occasional promotional offers that might interest you.'
     },
     {
@@ -230,9 +230,8 @@ const PermissionsRequest = () => {
   };
   
   const canProceed = () => {
-    return permissions
-      .filter(p => p.required)
-      .every(p => granted[p.id]);
+    // Only location permission is required now
+    return granted['location'];
   };
   
   const handleContinue = () => {
@@ -257,7 +256,7 @@ const PermissionsRequest = () => {
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-dalali-800">App Permissions</h1>
           <p className="text-gray-500 mt-2">
-            We need a few permissions to provide you with the best experience
+            We need location permission to provide you with the best experience
           </p>
         </div>
         
@@ -321,7 +320,7 @@ const PermissionsRequest = () => {
               Continue <ArrowRight size={18} className="ml-2" />
             </>
           ) : (
-            'Please enable required permissions'
+            'Please enable location access to continue'
           )}
         </Button>
       </motion.div>

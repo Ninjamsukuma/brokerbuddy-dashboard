@@ -18,12 +18,13 @@ const Index = () => {
     // Check if user has completed onboarding
     const hasSelectedLanguage = localStorage.getItem('hasSelectedLanguage');
     const onboardingComplete = localStorage.getItem('onboardingComplete');
+    const locationPermission = localStorage.getItem('permission_location');
     
     if (!hasSelectedLanguage) {
       // User hasn't selected a language yet, redirect to language selection
       navigate('/language-selection');
-    } else if (!onboardingComplete) {
-      // User hasn't completed permissions yet
+    } else if (!onboardingComplete || locationPermission !== 'granted') {
+      // User hasn't completed permissions yet or location permission is not granted
       navigate('/permissions');
     } else if (!user) {
       // User hasn't logged in yet
