@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MapPin, Bell, Users, ArrowRight, Info } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { useToast } from '@/components/ui/use-toast';
 import {
   Dialog,
   DialogContent,
@@ -11,6 +14,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type Permission = {
   id: string;
@@ -24,6 +37,7 @@ type Permission = {
 const PermissionsRequest = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { toast } = useToast();
   
   const [permissions, setPermissions] = useState<Permission[]>([
     {
@@ -53,17 +67,162 @@ const PermissionsRequest = () => {
   ]);
   
   const [openDialog, setOpenDialog] = useState<string | null>(null);
+  const [showPermissionDeniedAlert, setShowPermissionDeniedAlert] = useState(false);
+  const [deniedPermission, setDeniedPermission] = useState<string>('');
   const [granted, setGranted] = useState<Record<string, boolean>>({
     location: false,
     notifications: false,
     contacts: false
   });
   
-  const handlePermissionToggle = (id: string) => {
-    setGranted(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
+  // Check if permissions are already granted
+  useEffect(() => {
+    const checkExistingPermissions = async () => {
+      // Check location permission
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          () => {
+            // Location permission already granted
+            setGranted(prev => ({ ...prev, location: true }));
+          },
+          () => {
+            // Location permission not granted yet
+            console.log("Location permission not granted yet");
+          },
+          { timeout: 10000, enableHighAccuracy: true }
+        );
+      }
+      
+      // Check notification permission
+      if ('Notification' in window) {
+        const permission = Notification.permission;
+        if (permission === 'granted') {
+          setGranted(prev => ({ ...prev, notifications: true }));
+        }
+      }
+      
+      // For contacts, we just check localStorage since browser doesn't expose this directly
+      const contactsPermission = localStorage.getItem('contactsPermission');
+      if (contactsPermission === 'granted') {
+        setGranted(prev => ({ ...prev, contacts: true }));
+      }
+    };
+    
+    checkExistingPermissions();
+  }, []);
+  
+  const requestLocationPermission = async () => {
+    if (!navigator.geolocation) {
+      toast({
+        title: "Location not supported",
+        description: "Your device doesn't support location services",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    try {
+      return new Promise<boolean>((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            toast({
+              title: "Location access granted",
+              description: "You've successfully granted location access"
+            });
+            resolve(true);
+          },
+          (error) => {
+            console.error("Location permission denied", error);
+            setDeniedPermission('location');
+            setShowPermissionDeniedAlert(true);
+            resolve(false);
+          },
+          { enableHighAccuracy: true, timeout: 10000 }
+        );
+      });
+    } catch (error) {
+      console.error("Error requesting location", error);
+      return false;
+    }
+  };
+  
+  const requestNotificationPermission = async () => {
+    if (!("Notification" in window)) {
+      toast({
+        title: "Notifications not supported",
+        description: "Your browser doesn't support notifications",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        toast({
+          title: "Notification access granted",
+          description: "You've successfully granted notification access"
+        });
+        return true;
+      } else {
+        setDeniedPermission('notifications');
+        setShowPermissionDeniedAlert(true);
+        return false;
+      }
+    } catch (error) {
+      console.error("Error requesting notification permission", error);
+      return false;
+    }
+  };
+  
+  const requestContactsPermission = async () => {
+    // Since there's no direct browser API for contacts, we'll simulate it with localStorage
+    try {
+      // In a real app, this would use the Contacts Picker API or a native mobile API
+      localStorage.setItem('contactsPermission', 'granted');
+      toast({
+        title: "Contacts access granted",
+        description: "You've successfully granted contacts access"
+      });
+      return true;
+    } catch (error) {
+      console.error("Error simulating contacts permission", error);
+      return false;
+    }
+  };
+  
+  const handlePermissionToggle = async (id: string) => {
+    if (granted[id]) {
+      // If already granted, we can only disable it in our app (can't revoke browser permissions)
+      setGranted(prev => ({ ...prev, [id]: false }));
+      if (id === 'contacts') {
+        localStorage.removeItem('contactsPermission');
+      }
+      toast({
+        title: `${id} access disabled`,
+        description: `You've disabled ${id} access for this app`
+      });
+      return;
+    }
+    
+    // Request the permission
+    let success = false;
+    
+    switch (id) {
+      case 'location':
+        success = await requestLocationPermission();
+        break;
+      case 'notifications':
+        success = await requestNotificationPermission();
+        break;
+      case 'contacts':
+        success = await requestContactsPermission();
+        break;
+    }
+    
+    if (success) {
+      setGranted(prev => ({ ...prev, [id]: true }));
+    }
   };
   
   const showExplanation = (id: string) => {
@@ -78,6 +237,12 @@ const PermissionsRequest = () => {
   
   const handleContinue = () => {
     localStorage.setItem('onboardingComplete', 'true');
+    
+    // Record which permissions were granted
+    Object.entries(granted).forEach(([key, value]) => {
+      localStorage.setItem(`permission_${key}`, value ? 'granted' : 'denied');
+    });
+    
     navigate('/');
   };
   
@@ -130,13 +295,11 @@ const PermissionsRequest = () => {
                     >
                       {granted[permission.id] ? 'Disable' : 'Enable'}
                     </button>
-                    <div className={`h-6 w-10 rounded-full transition-colors ${granted[permission.id] ? 'bg-dalali-600' : 'bg-gray-300'}`}>
-                      <motion.div
-                        className="h-6 w-6 bg-white rounded-full shadow-md"
-                        animate={{ x: granted[permission.id] ? 16 : 0 }}
-                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                      />
-                    </div>
+                    <Switch
+                      checked={granted[permission.id]}
+                      onCheckedChange={() => handlePermissionToggle(permission.id)}
+                      className={`${granted[permission.id] ? 'bg-dalali-600' : 'bg-gray-300'}`}
+                    />
                   </div>
                 </div>
               </div>
@@ -190,8 +353,8 @@ const PermissionsRequest = () => {
               </Button>
               <Button 
                 onClick={() => {
-                  setGranted(prev => ({ ...prev, [permission.id]: true }));
                   setOpenDialog(null);
+                  handlePermissionToggle(permission.id);
                 }}
                 className="bg-dalali-600 hover:bg-dalali-700"
               >
@@ -201,6 +364,47 @@ const PermissionsRequest = () => {
           </DialogContent>
         </Dialog>
       ))}
+      
+      {/* Permission denied alert */}
+      <AlertDialog open={showPermissionDeniedAlert} onOpenChange={setShowPermissionDeniedAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Permission Required</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deniedPermission === 'location' && (
+                "Location access was denied. To use this feature, please enable location access in your browser settings."
+              )}
+              {deniedPermission === 'notifications' && (
+                "Notification access was denied. To receive updates, please enable notifications in your browser settings."
+              )}
+              {deniedPermission === 'contacts' && (
+                "Contacts access was denied. To use the referral feature, please try again or check your privacy settings."
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowPermissionDeniedAlert(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setShowPermissionDeniedAlert(false);
+                // Redirect to browser settings (this varies by browser and might not work in all browsers)
+                if (deniedPermission === 'location') {
+                  if (navigator.userAgent.includes('Chrome')) {
+                    window.open('chrome://settings/content/location', '_blank');
+                  } else if (navigator.userAgent.includes('Firefox')) {
+                    window.open('about:preferences#privacy', '_blank');
+                  }
+                  // Safari and other browsers don't have direct links to settings
+                }
+              }}
+            >
+              Open Settings
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
