@@ -22,8 +22,11 @@ const Index = () => {
     if (!hasSelectedLanguage) {
       // User hasn't selected a language yet, redirect to language selection
       navigate('/language-selection');
-    } else if (!user && !onboardingComplete) {
-      // User hasn't logged in or completed onboarding yet
+    } else if (!onboardingComplete) {
+      // User hasn't completed permissions yet
+      navigate('/permissions');
+    } else if (!user) {
+      // User hasn't logged in yet
       navigate('/login');
     }
   }, [navigate, user]);
