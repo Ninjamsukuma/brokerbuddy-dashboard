@@ -1,5 +1,6 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import NavigationBar from '../components/ui/NavigationBar';
 import WelcomeBanner from '../components/dashboard/WelcomeBanner';
 import QuickActions from '../components/dashboard/QuickActions';
@@ -7,14 +8,32 @@ import MapView from '../components/dashboard/MapView';
 import FeaturedBrokers from '../components/dashboard/FeaturedBrokers';
 import RecentActivity from '../components/dashboard/RecentActivity';
 import BottomTabs from '../components/ui/BottomTabs';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  
+  useEffect(() => {
+    // Check if user has completed onboarding
+    const hasSelectedLanguage = localStorage.getItem('hasSelectedLanguage');
+    const onboardingComplete = localStorage.getItem('onboardingComplete');
+    
+    if (!hasSelectedLanguage) {
+      // User hasn't selected a language yet, redirect to language selection
+      navigate('/language-selection');
+    } else if (!user && !onboardingComplete) {
+      // User hasn't logged in or completed onboarding yet
+      navigate('/login');
+    }
+  }, [navigate, user]);
+  
   return (
     <div className="min-h-screen bg-background pb-20">
       <NavigationBar />
       
       <main className="px-4 pb-4">
-        <WelcomeBanner name="Samwel" />
+        <WelcomeBanner name={user?.name || "Guest"} />
         
         <QuickActions />
         

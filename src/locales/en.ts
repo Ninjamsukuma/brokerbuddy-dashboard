@@ -41,6 +41,57 @@ export const enTranslations = {
   'profile.pending': 'Verification Pending',
   'profile.unverified': 'Unverified Account',
   
+  // Language
+  'language.title': 'Choose Your Language',
+  'language.subtitle': 'Select your preferred language',
+  'language.english': 'English',
+  'language.swahili': 'Kiswahili',
+  'language.continue': 'Continue',
+  
+  // Authentication
+  'auth.welcome': 'Welcome Back',
+  'auth.loginPrompt': 'Login to access your account',
+  'auth.signupPrompt': 'Join our community today',
+  'auth.email': 'Email',
+  'auth.phone': 'Phone Number',
+  'auth.password': 'Password',
+  'auth.confirmPassword': 'Confirm Password',
+  'auth.forgotPassword': 'Forgot Password?',
+  'auth.login': 'Login',
+  'auth.signup': 'Sign up',
+  'auth.noAccount': 'Don\'t have an account?',
+  'auth.haveAccount': 'Already have an account?',
+  'auth.orContinueWith': 'or continue with',
+  'auth.google': 'Google',
+  'auth.facebook': 'Facebook',
+  'auth.biometric': 'Use Biometrics',
+  'auth.continueWithPhone': 'Continue with Phone',
+  
+  // OTP Verification
+  'otp.title': 'Verification Code',
+  'otp.sentTo': 'We\'ve sent a 4-digit code to',
+  'otp.didntReceive': 'Didn\'t receive the code?',
+  'otp.resend': 'Resend Code',
+  'otp.resendIn': 'Resend in',
+  'otp.verify': 'Verify',
+  'otp.verifying': 'Verifying...',
+  
+  // Permissions
+  'permissions.title': 'App Permissions',
+  'permissions.subtitle': 'We need a few permissions to provide you with the best experience',
+  'permissions.required': 'Required permissions',
+  'permissions.location': 'Location Access',
+  'permissions.locationDesc': 'Required to find nearby brokers',
+  'permissions.notifications': 'Notification Access',
+  'permissions.notificationsDesc': 'Used for updates and promotional offers',
+  'permissions.contacts': 'Contacts Access',
+  'permissions.contactsDesc': 'Used for referral programs (optional)',
+  'permissions.enable': 'Enable',
+  'permissions.disable': 'Disable',
+  'permissions.why': 'Why we need this?',
+  'permissions.continue': 'Continue',
+  'permissions.requireAll': 'Please enable required permissions',
+  
   // Become Broker page
   'becomeBroker.title': 'Become a Broker',
   'becomeBroker.hero': 'Turn your expertise into income',
