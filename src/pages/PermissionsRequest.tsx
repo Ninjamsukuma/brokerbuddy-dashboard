@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -78,8 +77,6 @@ const PermissionsRequest = () => {
   };
   
   const handleContinue = () => {
-    // In a real app, we would actually request the permissions here
-    // For now, we'll just navigate to the home page
     localStorage.setItem('onboardingComplete', 'true');
     navigate('/');
   };
