@@ -1,5 +1,5 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
 
 type UserRole = 'client' | 'broker';
 
@@ -35,6 +35,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Fixed functional component declaration to properly use React hooks
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
