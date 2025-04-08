@@ -11,6 +11,7 @@ import BenefitsSection from '@/components/become-broker/BenefitsSection';
 import HowItWorksSection from '@/components/become-broker/HowItWorksSection';
 import TestimonialSection from '@/components/become-broker/TestimonialSection';
 import RegistrationForm from '@/components/become-broker/RegistrationForm';
+import LoginForm from '@/components/become-broker/LoginForm';
 import CTASection from '@/components/become-broker/CTASection';
 import { Button } from '@/components/ui/button';
 import { 
@@ -27,6 +28,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
 const BecomeBroker = () => {
   const navigate = useNavigate();
@@ -35,6 +42,7 @@ const BecomeBroker = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [activeTab, setActiveTab] = useState<'info' | 'register' | 'login'>('info');
 
   // Redirect to broker landing if user is a broker
   useEffect(() => {
@@ -57,12 +65,7 @@ const BecomeBroker = () => {
 
   const handleRegister = () => {
     if (!user) {
-      toast({
-        title: "Login Required",
-        description: "Please log in or create an account to become a broker",
-        duration: 3000,
-      });
-      // Don't navigate away, show login options instead
+      setActiveTab('register');
       return;
     }
     
@@ -105,6 +108,7 @@ const BecomeBroker = () => {
   
   const handleBack = () => {
     setIsRegistering(false);
+    setActiveTab('info');
   };
 
   const handleSubmitRegistration = async (e: React.FormEvent) => {
@@ -135,11 +139,15 @@ const BecomeBroker = () => {
   };
 
   const navigateToLogin = () => {
-    navigate('/login', { state: { returnUrl: '/become-broker' } });
+    setActiveTab('login');
   };
 
   const navigateToSignup = () => {
     navigate('/signup', { state: { initialRole: 'broker' } });
+  };
+  
+  const navigateToRegister = () => {
+    setActiveTab('register');
   };
   
   // Show loading while redirecting
@@ -157,7 +165,7 @@ const BecomeBroker = () => {
       <NavigationBar title="Become a Broker" showSearch={false} />
       
       <main className="px-4 pb-4">
-        {!user && (
+        {!user && activeTab === 'info' && (
           <div className="bg-white p-4 rounded-xl shadow-sm mb-4">
             <h2 className="text-lg font-semibold text-dalali-800 mb-3">Sign in to continue</h2>
             <p className="text-gray-600 text-sm mb-4">Please log in or create an account to become a broker</p>
@@ -181,30 +189,90 @@ const BecomeBroker = () => {
           </div>
         )}
         
-        {!isRegistering ? (
-          <>
-            <HeroSection onRegister={handleRegister} />
-            <StatsSection />
-            <BenefitsSection />
-            <HowItWorksSection />
-            <TestimonialSection />
-            <CTASection onRegister={handleRegister} />
-            
-            {/* Happy Broker Image */}
-            <div className="mb-8 rounded-xl overflow-hidden shadow-sm">
-              <img 
-                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&w=350&q=80"
-                alt="Happy broker earning money" 
-                className="w-full h-48 object-cover"
-              />
-              <div className="bg-white p-4">
-                <h3 className="font-medium text-dalali-800">Success on Your Terms</h3>
-                <p className="text-sm text-gray-600">Join thousands of brokers building successful careers with Dalali Kiganjani</p>
-              </div>
+        {activeTab === 'login' && <LoginForm />}
+        
+        {activeTab === 'register' && !user && (
+          <div className="bg-white p-4 rounded-xl shadow-sm mb-4">
+            <h2 className="text-lg font-semibold text-dalali-800 mb-3">Create an Account</h2>
+            <p className="text-gray-600 text-sm mb-4">Register as a new broker</p>
+            <Button 
+              onClick={navigateToSignup} 
+              className="w-full bg-dalali-600 hover:bg-dalali-700"
+            >
+              <User size={16} className="mr-2" />
+              Sign Up as Broker
+            </Button>
+            <div className="mt-4 text-center">
+              <button 
+                onClick={() => setActiveTab('login')} 
+                className="text-sm text-dalali-600 hover:underline"
+              >
+                Already have an account? Login
+              </button>
             </div>
-          </>
-        ) : (
+          </div>
+        )}
+        
+        {isRegistering ? (
           <RegistrationForm onSubmit={handleSubmitRegistration} onBack={handleBack} />
+        ) : (
+          activeTab === 'info' && (
+            <>
+              <HeroSection onRegister={handleRegister} />
+              
+              <div className="mb-8">
+                <Tabs defaultValue="new" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-4">
+                    <TabsTrigger value="new">New Broker</TabsTrigger>
+                    <TabsTrigger value="existing">Existing Broker</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="new">
+                    <div className="bg-white p-4 rounded-xl shadow-sm mb-4">
+                      <h3 className="font-medium text-dalali-800 mb-2">Register as a Broker</h3>
+                      <p className="text-sm text-gray-600 mb-3">Join our network of professional brokers and start earning today</p>
+                      <Button 
+                        onClick={navigateToRegister}
+                        className="w-full bg-dalali-600 hover:bg-dalali-700"
+                      >
+                        Get Started
+                      </Button>
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="existing">
+                    <div className="bg-white p-4 rounded-xl shadow-sm mb-4">
+                      <h3 className="font-medium text-dalali-800 mb-2">Already a Broker?</h3>
+                      <p className="text-sm text-gray-600 mb-3">Login to access your broker dashboard</p>
+                      <Button 
+                        onClick={navigateToLogin}
+                        className="w-full bg-dalali-600 hover:bg-dalali-700"
+                      >
+                        Login
+                      </Button>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </div>
+              
+              <StatsSection />
+              <BenefitsSection />
+              <HowItWorksSection />
+              <TestimonialSection />
+              <CTASection onRegister={handleRegister} />
+              
+              {/* Happy Broker Image */}
+              <div className="mb-8 rounded-xl overflow-hidden shadow-sm">
+                <img 
+                  src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&w=350&q=80"
+                  alt="Happy broker earning money" 
+                  className="w-full h-48 object-cover"
+                />
+                <div className="bg-white p-4">
+                  <h3 className="font-medium text-dalali-800">Success on Your Terms</h3>
+                  <p className="text-sm text-gray-600">Join thousands of brokers building successful careers with Dalali Kiganjani</p>
+                </div>
+              </div>
+            </>
+          )
         )}
       </main>
       
