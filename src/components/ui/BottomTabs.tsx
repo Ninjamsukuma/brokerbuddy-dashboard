@@ -34,6 +34,14 @@ const BottomTabs: React.FC = () => {
       path: '/profile',
     },
   ];
+
+  // List of paths where we should display the bottom tabs
+  const tabsEnabledPaths = ['/', '/find-broker', '/requests', '/messages', '/profile', '/login'];
+  
+  // Don't render bottom tabs for paths that shouldn't have them
+  if (!tabsEnabledPaths.includes(currentPath) && !tabsEnabledPaths.some(path => currentPath.startsWith(path))) {
+    return null;
+  }
   
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 glassmorphism border-t shadow-lg animate-slide-up">
