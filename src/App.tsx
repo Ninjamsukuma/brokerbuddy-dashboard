@@ -24,6 +24,9 @@ import BrokerLanding from "./pages/BrokerLanding";
 import MarketingMaterials from "./pages/MarketingMaterials";
 import NotFound from "./pages/NotFound";
 import PermissionsRequest from "./pages/PermissionsRequest";
+import NearbyBrokers from "./pages/NearbyBrokers";
+import BookBroker from "./pages/BookBroker";
+import BrokerProfile from "./pages/BrokerProfile";
 
 const queryClient = new QueryClient();
 
@@ -61,19 +64,27 @@ const App = () => {
               ) : (
                 <BrowserRouter>
                   <Routes>
+                    {/* Core Pages */}
                     <Route path="/language-selection" element={<LanguageSelection />} />
                     <Route path="/otp-verification" element={<OTPVerification />} />
                     <Route path="/permissions" element={<PermissionsRequest />} />
                     <Route path="/" element={<Index />} />
+                    
+                    {/* Broker Discovery & Booking */}
                     <Route path="/find-broker" element={<FindBroker />} />
+                    <Route path="/nearby-brokers" element={<NearbyBrokers />} />
+                    <Route path="/broker/:id" element={<BrokerProfile />} />
+                    <Route path="/book" element={<BookBroker />} />
+                    
+                    {/* User Pages */}
                     <Route path="/requests" element={<Requests />} />
                     <Route path="/messages" element={<Messages />} />
                     <Route path="/profile" element={<Profile />} />
                     
                     {/* Auth Routes */}
                     <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/broker-dashboard" element={<BrokerDashboard />} />
+                    <Route path="/register" element={<Signup />} />
+                    <Route path="/dashboard" element={<BrokerDashboard />} />
                     <Route path="/become-broker" element={<BecomeBroker />} />
                     <Route path="/broker-landing" element={<BrokerLanding />} />
                     <Route path="/marketing-materials" element={<MarketingMaterials />} />
@@ -81,7 +92,7 @@ const App = () => {
                     {/* Redirect to language selection by default */}
                     <Route path="" element={<Navigate to="/language-selection" replace />} />
                     
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    {/* Catch-all route for 404 */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </BrowserRouter>
