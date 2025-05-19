@@ -61,55 +61,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const socialLogin = async (provider: 'google' | 'facebook', userData: { name: string, email: string, id: string }) => {
-    setLoading(true);
-    setError(null);
-    try {
-      // Check if user exists by email
-      const existingUser = Object.values(registeredUsers).find(
-        (u) => u.email === userData.email
-      );
-      
-      // If user exists, just log them in
-      // If not, create a new account
-      if (!existingUser) {
-        // Create a random password for social login users
-        const randomPassword = Math.random().toString(36).slice(-8);
-        
-        // Register the new user
-        const newUserData: SignupData = {
-          name: userData.name,
-          email: userData.email,
-          role: 'client', // Default role for social login
-          password: randomPassword
-        };
-        
-        // Save to registered users
-        const updatedRegisteredUsers = {
-          ...registeredUsers,
-          [userData.email]: newUserData
-        };
-        updateRegisteredUsers(updatedRegisteredUsers);
-      }
-      
-      // Create the user object
-      const authUser = createSocialAuthUser(
-        provider, 
-        userData, 
-        existingUser ? existingUser.role : 'client'
-      );
-      
-      updateUser(authUser);
-      return Promise.resolve();
-    } catch (err) {
-      const errorMessage = err instanceof Error 
-        ? err.message 
-        : `An error occurred during ${provider} login`;
-      setError(errorMessage);
-      return Promise.reject(errorMessage);
-    } finally {
-      setLoading(false);
-    }
+  // Social login functionality is disabled
+  const socialLogin = async () => {
+    setError('Social login is currently disabled');
+    return Promise.reject('Social login is currently disabled');
   };
 
   const signup = async (userData: SignupData) => {

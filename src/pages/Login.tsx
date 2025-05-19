@@ -2,12 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { Eye, EyeOff, Mail, Phone, Lock, Fingerprint, Facebook, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, Mail, Phone, Lock, Fingerprint } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/hooks/useLanguage';
 import { toast } from '@/components/ui/use-toast';
-import { googleLogin, facebookLogin } from '@/utils/socialAuth';
 
 type LoginFormData = {
   identifier: string;
@@ -17,13 +16,12 @@ type LoginFormData = {
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, error, clearError, user, getRedirectPath, checkUserExists, socialLogin } = useAuth();
+  const { login, error, clearError, user, getRedirectPath, checkUserExists } = useAuth();
   const { t } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const [isEmail, setIsEmail] = useState(true);
   const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [socialLoading, setSocialLoading] = useState<'google' | 'facebook' | null>(null);
   
   const { register, handleSubmit, setError: setFormError, formState: { errors } } = useForm<LoginFormData>();
   
@@ -90,37 +88,6 @@ const Login = () => {
     
     // Use a mock login for demo
     login("user@example.com", "password123");
-  };
-  
-  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
-    setSocialLoading(provider);
-    try {
-      let userData;
-      
-      if (provider === 'google') {
-        userData = await googleLogin();
-      } else {
-        userData = await facebookLogin();
-      }
-      
-      await socialLogin(provider, userData);
-      
-      localStorage.setItem('previousLogin', 'true');
-      toast({
-        title: `${provider.charAt(0).toUpperCase() + provider.slice(1)} Login`,
-        description: "Login successful!",
-        duration: 3000,
-      });
-    } catch (err) {
-      toast({
-        title: "Login Error",
-        description: err instanceof Error ? err.message : "An error occurred during social login",
-        variant: "destructive",
-        duration: 3000,
-      });
-    } finally {
-      setSocialLoading(null);
-    }
   };
   
   const formVariants = {
@@ -290,76 +257,16 @@ const Login = () => {
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Continue with Phone <ArrowRight size={18} className="ml-2" />
+                Continue with Phone
               </motion.button>
             </div>
           )}
-
-          <div className="mt-6 relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">or continue with</span>
-            </div>
-          </div>
-        
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            <motion.button
-              type="button"
-              onClick={() => handleSocialLogin('google')}
-              className="w-full flex items-center justify-center py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
-              disabled={socialLoading !== null}
-            >
-              {socialLoading === 'google' ? (
-                <span className="animate-spin h-5 w-5 mr-2 border-2 border-gray-600 rounded-full border-t-transparent"></span>
-              ) : (
-                <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
-                  <path
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                    fill="#4285F4"
-                  />
-                  <path
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                    fill="#34A853"
-                  />
-                  <path
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                    fill="#FBBC05"
-                  />
-                  <path
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                    fill="#EA4335"
-                  />
-                </svg>
-              )}
-              Google
-            </motion.button>
-            
-            <motion.button
-              type="button"
-              onClick={() => handleSocialLogin('facebook')}
-              className="w-full flex items-center justify-center py-2.5 bg-[#1877F2] text-white rounded-lg hover:bg-[#166FE5] transition-colors"
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
-              disabled={socialLoading !== null}
-            >
-              {socialLoading === 'facebook' ? (
-                <span className="animate-spin h-5 w-5 mr-2 border-2 border-white rounded-full border-t-transparent"></span>
-              ) : (
-                <Facebook size={20} className="mr-2" />
-              )}
-              Facebook
-            </motion.button>
-          </div>
           
           {isBiometricAvailable && (
             <motion.button
               type="button"
               onClick={handleBiometricLogin}
-              className="w-full mt-3 flex items-center justify-center py-2.5 border border-dalali-500 text-dalali-600 rounded-lg hover:bg-dalali-50 transition-colors"
+              className="w-full mt-6 flex items-center justify-center py-2.5 border border-dalali-500 text-dalali-600 rounded-lg hover:bg-dalali-50 transition-colors"
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
             >
