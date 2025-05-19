@@ -84,6 +84,7 @@ const App = () => {
                     {/* Auth Routes */}
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Signup />} />
+                    <Route path="/signup" element={<Signup />} /> {/* Alias for /register */}
                     <Route path="/dashboard" element={<BrokerDashboard />} />
                     <Route path="/become-broker" element={<BecomeBroker />} />
                     <Route path="/broker-landing" element={<BrokerLanding />} />

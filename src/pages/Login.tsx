@@ -16,13 +16,14 @@ type LoginFormData = {
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, error, clearError, user, getRedirectPath } = useAuth();
+  const { login, error, clearError, user, getRedirectPath, checkUserExists } = useAuth();
   const { t } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const [isEmail, setIsEmail] = useState(true);
   const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
+  const { register, handleSubmit, setError: setFormError, formState: { errors } } = useForm<LoginFormData>();
   
   const returnUrl = location.state?.returnUrl || getRedirectPath();
   
@@ -40,8 +41,25 @@ const Login = () => {
   }, [user, navigate, returnUrl]);
   
   const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
     try {
+      // Check if user exists first
+      const userExists = await checkUserExists(data.identifier);
+      
+      if (!userExists) {
+        toast({
+          title: "Account Not Found",
+          description: "No account found with these credentials. Please sign up first.",
+          variant: "destructive",
+          duration: 3000,
+        });
+        setIsLoading(false);
+        navigate('/register', { state: { prefilledEmail: isEmail ? data.identifier : undefined } });
+        return;
+      }
+      
       await login(data.identifier, data.password);
+      
       localStorage.setItem('previousLogin', 'true');
       toast({
         title: "Login successful",
@@ -50,6 +68,8 @@ const Login = () => {
       });
     } catch (err) {
       // Error is handled by the auth context
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -211,11 +231,19 @@ const Login = () => {
               
               <motion.button
                 type="submit"
-                className="w-full bg-dalali-600 text-white py-3 rounded-lg font-semibold hover:bg-dalali-700 transition-colors duration-300"
+                className="w-full bg-dalali-600 text-white py-3 rounded-lg font-semibold hover:bg-dalali-700 transition-colors duration-300 flex items-center justify-center"
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
+                disabled={isLoading}
               >
-                Login
+                {isLoading ? (
+                  <>
+                    <span className="animate-spin h-5 w-5 mr-3 border-2 border-white rounded-full border-t-transparent"></span>
+                    Logging in...
+                  </>
+                ) : (
+                  'Login'
+                )}
               </motion.button>
             </form>
           ) : (
@@ -313,7 +341,7 @@ const Login = () => {
         
         <p className="text-center text-gray-600">
           Don't have an account?{" "}
-          <Link to="/signup" className="text-dalali-600 hover:underline font-medium">
+          <Link to="/register" className="text-dalali-600 hover:underline font-medium">
             Sign up
           </Link>
         </p>

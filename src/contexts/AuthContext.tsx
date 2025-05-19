@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { register, login as apiLogin } from '@/api/authApi'; 
 
 type UserRole = 'client' | 'broker';
 
@@ -31,6 +32,7 @@ interface AuthContextType {
   clearError: () => void;
   updateUserRole: (role: UserRole) => Promise<void>;
   getRedirectPath: () => string;
+  checkUserExists: (identifier: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,8 +42,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [registeredUsers, setRegisteredUsers] = useState<Record<string, SignupData>>({});
 
   useEffect(() => {
+    // Load user from localStorage
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
@@ -51,30 +55,60 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.removeItem('user');
       }
     }
+    
+    // Load registered users from localStorage
+    const storedRegisteredUsers = localStorage.getItem('registeredUsers');
+    if (storedRegisteredUsers) {
+      try {
+        setRegisteredUsers(JSON.parse(storedRegisteredUsers));
+      } catch (e) {
+        console.error('Error parsing stored registered users', e);
+        localStorage.removeItem('registeredUsers');
+      }
+    }
+    
     setLoading(false);
   }, []);
+
+  const checkUserExists = async (identifier: string): Promise<boolean> => {
+    // In a real app, this would be an API call to check if the user exists
+    // For our demo, check local storage
+    return Boolean(
+      Object.values(registeredUsers).find(
+        (u) => u.email === identifier || u.phone === identifier
+      )
+    );
+  };
 
   const login = async (identifier: string, password: string) => {
     setLoading(true);
     setError(null);
     try {
-      const mockResponse = {
-        data: {
-          user: {
-            id: '123',
-            name: 'John Doe',
-            email: identifier.includes('@') ? identifier : undefined,
-            phone: !identifier.includes('@') ? identifier : undefined,
-            role: 'client' as UserRole,
-            avatar: undefined,
-          },
-          token: 'mock-jwt-token'
-        }
-      };
+      // Check if user exists in our registered users
+      const userExists = await checkUserExists(identifier);
       
+      if (!userExists) {
+        throw new Error('No account found with these credentials. Please sign up first.');
+      }
+      
+      // In a real app, this would be an API call that verifies credentials
+      const registeredUser = Object.values(registeredUsers).find(
+        (u) => (u.email === identifier || u.phone === identifier) && u.password === password
+      );
+      
+      if (!registeredUser) {
+        throw new Error('Invalid credentials. Please try again.');
+      }
+      
+      // Simulate an API response with the user data
       const userData: AuthUser = {
-        ...mockResponse.data.user,
-        token: mockResponse.data.token
+        id: '123',
+        name: registeredUser.name,
+        email: registeredUser.email,
+        phone: registeredUser.phone,
+        role: registeredUser.role,
+        token: 'mock-jwt-token',
+        avatar: undefined
       };
       
       setUser(userData);
@@ -84,6 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ? err.message 
         : 'An error occurred during login';
       setError(errorMessage);
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -93,10 +128,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     setError(null);
     try {
+      // Check if email or phone already exists
+      if (userData.email && 
+          Object.values(registeredUsers).some((u) => u.email === userData.email)) {
+        throw new Error('Email is already registered.');
+      }
+      
+      if (userData.phone && 
+          Object.values(registeredUsers).some((u) => u.phone === userData.phone)) {
+        throw new Error('Phone number is already registered.');
+      }
+      
+      // In a real app, this would be an API call to register the user
       const mockResponse = {
         data: {
           user: {
-            id: '123',
+            id: Date.now().toString(),
             name: userData.name,
             email: userData.email,
             phone: userData.phone,
@@ -112,13 +159,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         token: mockResponse.data.token
       };
       
+      // Save to registered users
+      const identifier = userData.email || userData.phone || '';
+      const updatedRegisteredUsers = {
+        ...registeredUsers,
+        [identifier]: userData
+      };
+      setRegisteredUsers(updatedRegisteredUsers);
+      localStorage.setItem('registeredUsers', JSON.stringify(updatedRegisteredUsers));
+      
+      // Log the user in
       setUser(newUser);
       localStorage.setItem('user', JSON.stringify(newUser));
+      
     } catch (err) {
       const errorMessage = err instanceof Error 
         ? err.message 
         : 'An error occurred during signup';
       setError(errorMessage);
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -165,7 +224,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const getRedirectPath = () => {
     if (!user) return '/login';
-    return user.role === 'broker' ? '/broker-dashboard' : '/';
+    return user.role === 'broker' ? '/broker-landing' : '/';
   };
 
   return (
@@ -178,7 +237,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       logout, 
       clearError,
       updateUserRole,
-      getRedirectPath
+      getRedirectPath,
+      checkUserExists
     }}>
       {children}
     </AuthContext.Provider>

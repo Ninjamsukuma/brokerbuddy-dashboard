@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -18,15 +19,18 @@ type SignupFormData = {
 const Signup = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { signup, error, clearError, user, getRedirectPath } = useAuth();
+  const { signup, error, clearError, user, getRedirectPath, checkUserExists } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isEmail, setIsEmail] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   
   const initialRole = location.state?.initialRole || 'client';
+  const prefilledEmail = location.state?.prefilledEmail || '';
   
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<SignupFormData>({
     defaultValues: {
-      role: initialRole
+      role: initialRole,
+      email: prefilledEmail
     }
   });
   
@@ -36,7 +40,11 @@ const Signup = () => {
     if (location.state?.initialRole) {
       setValue('role', location.state.initialRole);
     }
-  }, [location.state, setValue]);
+    
+    if (prefilledEmail) {
+      setIsEmail(true);
+    }
+  }, [location.state, setValue, prefilledEmail]);
   
   useEffect(() => {
     if (user) {
@@ -45,6 +53,7 @@ const Signup = () => {
   }, [user, navigate, getRedirectPath]);
   
   const onSubmit = async (data: SignupFormData) => {
+    setIsLoading(true);
     try {
       if (data.password !== data.confirmPassword) {
         toast({
@@ -53,7 +62,25 @@ const Signup = () => {
           variant: "destructive",
           duration: 3000,
         });
+        setIsLoading(false);
         return;
+      }
+      
+      // Check if user already exists
+      const identifier = isEmail ? data.email : data.phone;
+      if (identifier) {
+        const userExists = await checkUserExists(identifier);
+        if (userExists) {
+          toast({
+            title: "Account Already Exists",
+            description: `An account with this ${isEmail ? 'email' : 'phone number'} already exists. Please login instead.`,
+            variant: "destructive",
+            duration: 3000,
+          });
+          setIsLoading(false);
+          navigate('/login');
+          return;
+        }
       }
       
       await signup({
@@ -70,9 +97,11 @@ const Signup = () => {
         duration: 3000,
       });
       
-      navigate(data.role === 'broker' ? '/broker-dashboard' : '/');
+      navigate(data.role === 'broker' ? '/broker-landing' : '/');
     } catch (err) {
       // Error is handled by the auth context
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -282,11 +311,19 @@ const Signup = () => {
             
             <motion.button
               type="submit"
-              className="w-full bg-dalali-600 text-white py-3 rounded-lg font-semibold hover:bg-dalali-700 transition-colors duration-300"
+              className="w-full bg-dalali-600 text-white py-3 rounded-lg font-semibold hover:bg-dalali-700 transition-colors duration-300 flex items-center justify-center"
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
+              disabled={isLoading}
             >
-              Create Account
+              {isLoading ? (
+                <>
+                  <span className="animate-spin h-5 w-5 mr-3 border-2 border-white rounded-full border-t-transparent"></span>
+                  Creating Account...
+                </>
+              ) : (
+                'Create Account'
+              )}
             </motion.button>
           </form>
         </div>
