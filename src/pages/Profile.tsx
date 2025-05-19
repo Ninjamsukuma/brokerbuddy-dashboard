@@ -1,21 +1,26 @@
+
 import React from 'react';
 import { ChevronRight, User, Shield, CreditCard, Bell, HelpCircle, LogOut, Mail, Phone, MapPin, Settings } from 'lucide-react';
 import NavigationBar from '../components/ui/NavigationBar';
 import BottomTabs from '../components/ui/BottomTabs';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/contexts/auth';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
   const { t } = useLanguage();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   
-  // Mock user data
-  const user = {
-    name: 'Samwel Johnson',
-    email: 'samwel.j@example.com',
-    phone: '+255 712 345 678',
-    location: 'Dar es Salaam, Tanzania',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    verificationStatus: 'verified', // 'pending', 'verified', 'unverified'
-  };
+  // If no user is logged in, redirect to login
+  React.useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+  
+  // Default avatar if user doesn't have one
+  const defaultAvatar = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80';
 
   const menuSections = [
     {
@@ -38,10 +43,25 @@ const Profile = () => {
       title: 'Support',
       items: [
         { icon: HelpCircle, label: t('profile.helpCenter'), path: '/help' },
-        { icon: LogOut, label: t('profile.logout'), path: '/logout', danger: true },
+        { icon: LogOut, label: t('profile.logout'), path: '/logout', danger: true, onClick: () => {
+          logout();
+          navigate('/login');
+        }},
       ]
     }
   ];
+
+  // Loading state while checking authentication
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4">Loading profile...</div>
+          <div className="animate-spin h-8 w-8 border-4 border-dalali-600 rounded-full border-t-transparent mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -53,13 +73,13 @@ const Profile = () => {
           <div className="relative mb-3">
             <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-md">
               <img 
-                src={user.avatar} 
+                src={user.avatar || defaultAvatar} 
                 alt={user.name} 
                 className="w-full h-full object-cover"
               />
             </div>
             
-            {user.verificationStatus === 'verified' && (
+            {user.role === 'broker' && (
               <div className="absolute bottom-0 right-0 bg-dalali-600 text-white p-1 rounded-full border-2 border-white">
                 <Shield size={16} />
               </div>
@@ -69,34 +89,34 @@ const Profile = () => {
           <h1 className="text-xl font-semibold text-dalali-800">{user.name}</h1>
           
           <div className="flex items-center space-x-1 mt-1">
-            {user.verificationStatus === 'verified' ? (
+            {user.role === 'broker' ? (
               <div className="chip bg-green-100 text-green-700">
                 <Shield size={12} className="mr-1" />
                 {t('profile.verified')}
               </div>
-            ) : user.verificationStatus === 'pending' ? (
-              <div className="chip bg-amber-100 text-amber-700">
-                {t('profile.pending')}
-              </div>
             ) : (
-              <div className="chip bg-red-100 text-red-700">
-                {t('profile.unverified')}
+              <div className="chip bg-blue-100 text-blue-700">
+                {t('profile.client')}
               </div>
             )}
           </div>
           
           <div className="mt-4 flex flex-col items-center space-y-1 text-sm text-gray-600">
-            <div className="flex items-center">
-              <Mail size={14} className="mr-1" />
-              {user.email}
-            </div>
-            <div className="flex items-center">
-              <Phone size={14} className="mr-1" />
-              {user.phone}
-            </div>
+            {user.email && (
+              <div className="flex items-center">
+                <Mail size={14} className="mr-1" />
+                {user.email}
+              </div>
+            )}
+            {user.phone && (
+              <div className="flex items-center">
+                <Phone size={14} className="mr-1" />
+                {user.phone}
+              </div>
+            )}
             <div className="flex items-center">
               <MapPin size={14} className="mr-1" />
-              {user.location}
+              {t('location.defaultLocation')}
             </div>
           </div>
           
@@ -115,6 +135,12 @@ const Profile = () => {
                 <a 
                   key={item.label} 
                   href={item.path} 
+                  onClick={(e) => {
+                    if (item.onClick) {
+                      e.preventDefault();
+                      item.onClick();
+                    }
+                  }}
                   className={`flex items-center justify-between p-4 ${
                     itemIndex !== section.items.length - 1 ? 'border-b border-gray-100' : ''
                   }`}
