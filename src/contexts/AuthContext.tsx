@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { register, login as apiLogin } from '@/api/authApi'; 
 
@@ -28,6 +27,7 @@ interface AuthContextType {
   error: string | null;
   login: (identifier: string, password: string) => Promise<void>;
   signup: (userData: SignupData) => Promise<void>;
+  socialLogin: (provider: 'google' | 'facebook', userData: { name: string, email: string, id: string }) => Promise<void>;
   logout: () => void;
   clearError: () => void;
   updateUserRole: (role: UserRole) => Promise<void>;
@@ -119,6 +119,64 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         : 'An error occurred during login';
       setError(errorMessage);
       throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const socialLogin = async (provider: 'google' | 'facebook', userData: { name: string, email: string, id: string }) => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Check if user exists by email
+      const existingUser = Object.values(registeredUsers).find(
+        (u) => u.email === userData.email
+      );
+      
+      // If user exists, just log them in
+      // If not, create a new account
+      if (!existingUser) {
+        // Create a random password for social login users
+        const randomPassword = Math.random().toString(36).slice(-8);
+        
+        // Register the new user
+        const newUserData: SignupData = {
+          name: userData.name,
+          email: userData.email,
+          role: 'client', // Default role for social login
+          password: randomPassword
+        };
+        
+        // Save to registered users
+        const updatedRegisteredUsers = {
+          ...registeredUsers,
+          [userData.email]: newUserData
+        };
+        setRegisteredUsers(updatedRegisteredUsers);
+        localStorage.setItem('registeredUsers', JSON.stringify(updatedRegisteredUsers));
+      }
+      
+      // Create the user object
+      const authUser: AuthUser = {
+        id: userData.id,
+        name: userData.name,
+        email: userData.email,
+        role: existingUser ? existingUser.role : 'client',
+        token: `${provider}-mock-jwt-token`,
+        avatar: provider === 'google' 
+          ? `https://lh3.googleusercontent.com/a/${userData.id}` 
+          : `https://graph.facebook.com/${userData.id}/picture?type=large`
+      };
+      
+      setUser(authUser);
+      localStorage.setItem('user', JSON.stringify(authUser));
+      return Promise.resolve();
+    } catch (err) {
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : `An error occurred during ${provider} login`;
+      setError(errorMessage);
+      return Promise.reject(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -234,6 +292,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       error, 
       login, 
       signup, 
+      socialLogin,
       logout, 
       clearError,
       updateUserRole,
