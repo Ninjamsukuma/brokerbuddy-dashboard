@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu, Briefcase, LayoutDashboard, LogOut } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
-import { useAuth } from '@/contexts/AuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { toast } from '@/components/ui/use-toast';
 import {
   Sheet,
@@ -20,11 +20,11 @@ interface SidebarMenuProps {
 const SidebarMenu: React.FC<SidebarMenuProps> = ({ showMenu }) => {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const { user, logout } = useAuth();
+  const { user, profile, signOut } = useSupabaseAuth();
 
   const navigateToBecomeABroker = () => {
     // If already logged in as broker, go directly to broker dashboard
-    if (user?.role === 'broker') {
+    if (profile?.role === 'broker') {
       navigate('/broker-dashboard');
       return;
     }
@@ -40,7 +40,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ showMenu }) => {
   };
   
   const handleLogout = () => {
-    logout();
+    signOut();
     toast({
       title: "Logged Out",
       description: "You have been logged out successfully",
@@ -71,9 +71,9 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ showMenu }) => {
               className="h-full w-full object-cover"
             />
           </div>
-          <h3 className="font-medium text-lg">{user?.name || 'Guest User'}</h3>
-          <p className="text-sm text-muted-foreground">{user?.phone || user?.email || 'Not logged in'}</p>
-          {user?.role === 'broker' && (
+          <h3 className="font-medium text-lg">{profile?.full_name || user?.email || 'Guest User'}</h3>
+          <p className="text-sm text-muted-foreground">{profile?.phone || user?.email || 'Not logged in'}</p>
+          {profile?.role === 'broker' && (
             <span className="bg-dalali-100 text-dalali-800 text-xs px-2 py-1 rounded-full mt-1">
               Broker
             </span>
@@ -103,7 +103,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ showMenu }) => {
                 <span>{t('menu.location')}</span>
               </button>
               
-              {user?.role === 'broker' ? (
+              {profile?.role === 'broker' ? (
                 <>
                   <button 
                     className="w-full flex items-center px-3 py-2 text-sm rounded-md bg-dalali-50 text-dalali-600 hover:bg-dalali-100"

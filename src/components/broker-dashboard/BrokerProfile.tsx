@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,14 +10,13 @@ import { Camera, Check, Star, Shield } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 
 const BrokerProfile = () => {
-  const { user } = useAuth();
+  const { user, profile: userProfile } = useSupabaseAuth();
   const { t } = useLanguage();
   
-  // Mock profile data
-  const [profile, setProfile] = useState({
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    phone: '+255 712 345 678',
+  const [brokerProfile, setBrokerProfile] = useState({
+    name: userProfile?.full_name || 'John Doe',
+    email: userProfile?.email || 'johndoe@example.com',
+    phone: userProfile?.phone || '+255 712 345 678',
     bio: 'Experienced real estate broker with over 5 years in the Dar es Salaam market. Specializing in residential properties and land.',
     location: 'Dar es Salaam, Tanzania',
     specialization: 'Residential Properties',
@@ -25,14 +24,14 @@ const BrokerProfile = () => {
     rating: 4.8,
     reviewCount: 56,
     verified: true,
-    profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    profileImage: userProfile?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
   });
   
   const [isEditing, setIsEditing] = useState(false);
-  const [editedProfile, setEditedProfile] = useState(profile);
+  const [editedProfile, setEditedProfile] = useState(brokerProfile);
   
   const handleSaveProfile = () => {
-    setProfile(editedProfile);
+    setBrokerProfile(editedProfile);
     setIsEditing(false);
     toast({
       title: "Profile Updated",
@@ -61,8 +60,8 @@ const BrokerProfile = () => {
           <div className="relative mb-4 sm:mb-0">
             <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-md">
               <img 
-                src={profile.profileImage} 
-                alt={profile.name} 
+            src={brokerProfile.profileImage}
+            alt={brokerProfile.name}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -74,7 +73,7 @@ const BrokerProfile = () => {
                 <Camera size={16} />
               </button>
             )}
-            {profile.verified && !isEditing && (
+            {brokerProfile.verified && !isEditing && (
               <div className="absolute bottom-0 right-0 bg-dalali-600 text-white p-1 rounded-full border-2 border-white">
                 <Shield size={16} />
               </div>
@@ -84,40 +83,40 @@ const BrokerProfile = () => {
           <div className="flex-1 text-center sm:text-left">
             {!isEditing ? (
               <>
-                <h2 className="text-xl font-semibold text-dalali-800">{profile.name}</h2>
+                <h2 className="text-xl font-semibold text-dalali-800">{brokerProfile.name}</h2>
                 <div className="flex items-center justify-center sm:justify-start mt-1 mb-2">
                   <div className="flex items-center text-amber-500 mr-2">
                     <Star size={16} className="fill-current" />
-                    <span className="ml-1 text-sm font-medium">{profile.rating}</span>
+                    <span className="ml-1 text-sm font-medium">{brokerProfile.rating}</span>
                   </div>
-                  <span className="text-sm text-gray-500">({profile.reviewCount} reviews)</span>
-                  {profile.verified && (
+                  <span className="text-sm text-gray-500">({brokerProfile.reviewCount} reviews)</span>
+                  {brokerProfile.verified && (
                     <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 border-green-200">
                       <Check size={12} className="mr-1" /> Verified
                     </Badge>
                   )}
                 </div>
-                <p className="text-gray-600 text-sm mb-3">{profile.bio}</p>
+                <p className="text-gray-600 text-sm mb-3">{brokerProfile.bio}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                   <div>
                     <p className="font-medium text-gray-700">Email:</p>
-                    <p className="text-gray-600">{profile.email}</p>
+                    <p className="text-gray-600">{brokerProfile.email}</p>
                   </div>
                   <div>
                     <p className="font-medium text-gray-700">Phone:</p>
-                    <p className="text-gray-600">{profile.phone}</p>
+                    <p className="text-gray-600">{brokerProfile.phone}</p>
                   </div>
                   <div>
                     <p className="font-medium text-gray-700">Location:</p>
-                    <p className="text-gray-600">{profile.location}</p>
+                    <p className="text-gray-600">{brokerProfile.location}</p>
                   </div>
                   <div>
                     <p className="font-medium text-gray-700">Specialization:</p>
-                    <p className="text-gray-600">{profile.specialization}</p>
+                    <p className="text-gray-600">{brokerProfile.specialization}</p>
                   </div>
                   <div>
                     <p className="font-medium text-gray-700">Experience:</p>
-                    <p className="text-gray-600">{profile.yearsOfExperience} years</p>
+                    <p className="text-gray-600">{brokerProfile.yearsOfExperience} years</p>
                   </div>
                 </div>
               </>
@@ -203,7 +202,7 @@ const BrokerProfile = () => {
                 variant="outline" 
                 onClick={() => {
                   setIsEditing(false);
-                  setEditedProfile(profile);
+                  setEditedProfile(brokerProfile);
                 }}
               >
                 Cancel
