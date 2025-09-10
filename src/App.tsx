@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { LanguageProvider } from "@/hooks/useLanguage";
-import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import SplashScreen from "./components/SplashScreen";
 import LanguageSelection from "./pages/LanguageSelection";
 import OTPVerification from "./pages/OTPVerification";
@@ -16,9 +16,8 @@ import FindBroker from "./pages/FindBroker";
 import Requests from "./pages/Requests";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
-import Auth from "./pages/Auth";
-import BrokerPortal from "./pages/BrokerPortal";
-import ClientDashboard from "./pages/ClientDashboard";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import BrokerDashboard from "./pages/BrokerDashboard";
 import BecomeBroker from "./pages/BecomeBroker";
 import BrokerLanding from "./pages/BrokerLanding";
@@ -54,7 +53,7 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SupabaseAuthProvider>
+      <AuthProvider>
         <LanguageProvider>
           <TooltipProvider>
             <Toaster />
@@ -83,13 +82,9 @@ const App = () => {
                     <Route path="/profile" element={<Profile />} />
                     
                     {/* Auth Routes */}
-                    <Route path="/auth" element={<Auth />} />
-                    
-                    {/* Role-based Routes */}
-                    <Route path="/broker-portal" element={<BrokerPortal />} />
-                    <Route path="/client-dashboard" element={<ClientDashboard />} />
-                    
-                    {/* Legacy Routes */}
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Signup />} />
+                    <Route path="/signup" element={<Signup />} /> {/* Alias for /register */}
                     <Route path="/dashboard" element={<BrokerDashboard />} />
                     <Route path="/become-broker" element={<BecomeBroker />} />
                     <Route path="/broker-landing" element={<BrokerLanding />} />
@@ -106,7 +101,7 @@ const App = () => {
             </AnimatePresence>
           </TooltipProvider>
         </LanguageProvider>
-      </SupabaseAuthProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };

@@ -8,11 +8,11 @@ import MapView from '../components/dashboard/MapView';
 import FeaturedBrokers from '../components/dashboard/FeaturedBrokers';
 import RecentActivity from '../components/dashboard/RecentActivity';
 import BottomTabs from '../components/ui/BottomTabs';
-import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { user, profile } = useSupabaseAuth();
+  const { user } = useAuth();
   
   useEffect(() => {
     // Check if user has completed onboarding
@@ -28,7 +28,7 @@ const Index = () => {
       navigate('/permissions');
     } else if (!user) {
       // User hasn't logged in yet
-      navigate('/auth');
+      navigate('/login');
     }
   }, [navigate, user]);
   
@@ -37,7 +37,7 @@ const Index = () => {
       <NavigationBar />
       
       <main className="px-4 pb-4">
-        <WelcomeBanner name={profile?.full_name || user?.email || "Guest"} />
+        <WelcomeBanner name={user?.name || "Guest"} />
         
         <QuickActions />
         
