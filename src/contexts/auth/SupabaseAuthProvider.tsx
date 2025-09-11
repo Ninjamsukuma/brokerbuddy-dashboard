@@ -206,7 +206,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Redirect based on user role
     switch (user.role) {
       case 'broker':
-        return '/broker-landing';
+        return '/broker-dashboard';
       case 'client':
       default:
         return '/';

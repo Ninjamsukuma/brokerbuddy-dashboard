@@ -29,6 +29,9 @@ const Index = () => {
     } else if (!user) {
       // User hasn't logged in yet
       navigate('/login');
+    } else if (user.role === 'broker') {
+      // Brokers should go to their dashboard
+      navigate('/broker-dashboard');
     }
   }, [navigate, user]);
   
