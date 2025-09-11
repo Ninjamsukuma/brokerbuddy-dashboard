@@ -66,22 +66,7 @@ const Signup = () => {
         return;
       }
       
-      // Check if user already exists
-      const identifier = isEmail ? data.email : data.phone;
-      if (identifier) {
-        const userExists = await checkUserExists(identifier);
-        if (userExists) {
-          toast({
-            title: "Account Already Exists",
-            description: `An account with this ${isEmail ? 'email' : 'phone number'} already exists. Please login instead.`,
-            variant: "destructive",
-            duration: 3000,
-          });
-          setIsLoading(false);
-          navigate('/login');
-          return;
-        }
-      }
+      // Rely on Supabase to report if the user already exists; avoids RLS issues
       
       await signup({
         name: data.name,

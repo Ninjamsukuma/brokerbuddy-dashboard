@@ -219,14 +219,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkUserExists = async (identifier: string): Promise<boolean> => {
     try {
-      const { data } = await supabase
+      // Use maybeSingle to avoid 406 when no rows; note RLS blocks viewing other users when unauthenticated
+      const { data, error } = await supabase
         .from('profiles')
         .select('id')
         .eq('email', identifier)
-        .single();
+        .maybeSingle();
       
+      if (error) {
+        console.warn('checkUserExists error (ignored):', error);
+      }
       return !!data;
-    } catch {
+    } catch (e) {
+      console.warn('checkUserExists exception (ignored):', e);
       return false;
     }
   };

@@ -43,20 +43,8 @@ const Login = () => {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      // Check if user exists first
-      const userExists = await checkUserExists(data.identifier);
-      
-      if (!userExists) {
-        toast({
-          title: "Account Not Found",
-          description: "No account found with these credentials. Please sign up first.",
-          variant: "destructive",
-          duration: 3000,
-        });
-        setIsLoading(false);
-        navigate('/register', { state: { prefilledEmail: isEmail ? data.identifier : undefined } });
-        return;
-      }
+      // Attempt login directly; rely on Supabase errors for feedback
+      await login(data.identifier, data.password);
       
       await login(data.identifier, data.password);
       
