@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { LanguageProvider } from "@/hooks/useLanguage";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider } from "@/contexts/auth/SupabaseAuthProvider";
 import SplashScreen from "./components/SplashScreen";
 import LanguageSelection from "./pages/LanguageSelection";
 import OTPVerification from "./pages/OTPVerification";

@@ -4,7 +4,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Eye, EyeOff, User, Mail, Phone, Lock, Briefcase, UserCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth/SupabaseAuthProvider';
 import { toast } from '@/components/ui/use-toast';
 
 type SignupFormData = {
