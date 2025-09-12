@@ -75,6 +75,8 @@ const App = () => {
                     <Route path="/nearby-brokers" element={<NearbyBrokers />} />
                     <Route path="/broker/:id" element={<BrokerProfile />} />
                     <Route path="/book" element={<BookBroker />} />
+                    <Route path="/book-broker" element={<BookBroker />} />
+                    <Route path="/broker-profile" element={<BrokerProfile />} />
                     
                     {/* User Pages */}
                     <Route path="/requests" element={<Requests />} />
@@ -85,15 +87,13 @@ const App = () => {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Signup />} />
                     <Route path="/signup" element={<Signup />} /> {/* Alias for /register */}
-                    <Route path="/dashboard" element={<BrokerDashboard />} />
+                    <Route path="/broker-dashboard" element={<BrokerDashboard />} />
                     <Route path="/become-broker" element={<BecomeBroker />} />
                     <Route path="/broker-landing" element={<BrokerLanding />} />
                     <Route path="/marketing-materials" element={<MarketingMaterials />} />
                     
-                    {/* Redirect to language selection by default */}
-                    <Route path="" element={<Navigate to="/language-selection" replace />} />
-                    
                     {/* Catch-all route for 404 */}
+                    <Route path="/not-found" element={<NotFound />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </BrowserRouter>

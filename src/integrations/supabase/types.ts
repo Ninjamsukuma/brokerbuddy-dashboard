@@ -50,15 +50,94 @@ export type Database = {
         }
         Relationships: []
       }
+      routes: {
+        Row: {
+          access_level: Database["public"]["Enums"]["route_access"]
+          component: string
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          is_navigation_item: boolean
+          name: string
+          order_priority: number
+          parent_route_id: string | null
+          path: string
+          redirect_path: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          access_level?: Database["public"]["Enums"]["route_access"]
+          component: string
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_navigation_item?: boolean
+          name: string
+          order_priority?: number
+          parent_route_id?: string | null
+          path: string
+          redirect_path?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          access_level?: Database["public"]["Enums"]["route_access"]
+          component?: string
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_navigation_item?: boolean
+          name?: string
+          order_priority?: number
+          parent_route_id?: string | null
+          path?: string
+          redirect_path?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "routes_parent_route_id_fkey"
+            columns: ["parent_route_id"]
+            isOneToOne: false
+            referencedRelation: "routes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_routes: {
+        Args: { user_role?: string }
+        Returns: {
+          access_level: Database["public"]["Enums"]["route_access"]
+          component: string
+          description: string
+          icon: string
+          id: string
+          is_navigation_item: boolean
+          name: string
+          order_priority: number
+          parent_route_id: string
+          path: string
+          redirect_path: string
+          title: string
+        }[]
+      }
     }
     Enums: {
       app_role: "broker" | "client"
+      route_access: "public" | "authenticated" | "client" | "broker" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -187,6 +266,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["broker", "client"],
+      route_access: ["public", "authenticated", "client", "broker", "admin"],
     },
   },
 } as const
