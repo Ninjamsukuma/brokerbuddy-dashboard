@@ -33,7 +33,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
         <div className="flex items-center space-x-2">
           {title === "Dalali Kiganjani" && (
             <img 
-              src={logoIcon} 
+              src="/lovable-uploads/21d90d31-7676-4ed3-8bd0-9c475a53dc05.png" 
               alt="Dalali Kiganjani Logo" 
               className="w-6 h-6 object-contain"
             />
