@@ -6,6 +6,7 @@ import SearchDialog from '@/components/navigation/SearchDialog';
 import NotificationsDialog from '@/components/navigation/NotificationsDialog';
 import LanguageSelector from '@/components/navigation/LanguageSelector';
 import SidebarMenu from '@/components/navigation/SidebarMenu';
+import logoIcon from '@/assets/logo-icon.png';
 
 interface NavigationBarProps {
   title?: string;
@@ -28,10 +29,19 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
         {/* Left side: Menu or Back button */}
         <SidebarMenu showMenu={showMenu} />
         
-        {/* Center: Title or Logo - using brand-logo class without italic */}
-        <h1 className={`${title === "Dalali Kiganjani" ? "brand-logo" : "font-semibold"}`}>
-          {title === "Dalali Kiganjani" ? t('appName') : t(title)}
-        </h1>
+        {/* Center: Title or Logo */}
+        <div className="flex items-center space-x-2">
+          {title === "Dalali Kiganjani" && (
+            <img 
+              src={logoIcon} 
+              alt="Dalali Kiganjani Logo" 
+              className="w-6 h-6 object-contain"
+            />
+          )}
+          <h1 className={`${title === "Dalali Kiganjani" ? "brand-logo-subtle" : "font-semibold"}`}>
+            {title === "Dalali Kiganjani" ? t('appName') : t(title)}
+          </h1>
+        </div>
         
         {/* Right side: Language selector, Notification */}
         <div className="flex items-center space-x-3">

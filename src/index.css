@@ -126,6 +126,14 @@
     letter-spacing: 0.03em;
     @apply text-dalali-600;
   }
+  
+  .brand-logo-subtle {
+    font-family: 'Lemon Milk', 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+    @apply text-dalali-400 opacity-90;
+  }
 }
 
 /* Custom scrollbar */
