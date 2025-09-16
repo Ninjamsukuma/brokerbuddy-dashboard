@@ -10,16 +10,19 @@ import {
 import { OrderStatus } from './OrderStatusBadge';
 import OrderSummary from './OrderSummary';
 import OrderItem from './OrderItem';
-import { mockOrders } from './ordersMockData';
 
-const BrokerOrders = () => {
+interface BrokerOrdersProps {
+  orders?: any[];
+}
+
+const BrokerOrders: React.FC<BrokerOrdersProps> = ({ orders = [] }) => {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'all' | OrderStatus>('all');
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
   const filteredOrders = activeTab === 'all'
-    ? mockOrders
-    : mockOrders.filter(order => order.status === activeTab);
+    ? orders
+    : orders.filter(order => order.status === activeTab);
 
   const toggleOrderExpand = (orderId: string) => {
     setExpandedOrder(expandedOrder === orderId ? null : orderId);
@@ -27,7 +30,7 @@ const BrokerOrders = () => {
 
   return (
     <div className="space-y-4">
-      <OrderSummary orders={mockOrders} />
+      <OrderSummary orders={orders} />
       
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         <Tabs defaultValue={activeTab} onValueChange={(value) => setActiveTab(value as any)}>

@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import NavigationBar from '../components/ui/NavigationBar';
 import BottomTabs from '../components/ui/BottomTabs';
@@ -7,11 +6,23 @@ import BrokerSearchInput from '@/components/find-broker/BrokerSearchInput';
 import FilterBar from '@/components/find-broker/FilterBar';
 import BrokerList from '@/components/find-broker/BrokerList';
 import { useBrokerFilters } from '@/components/find-broker/useBrokerFilters';
-import { brokers } from '@/components/find-broker/brokerData';
+import { useBrokerServices } from '@/hooks/useBrokerServices';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { toast } from '@/components/ui/use-toast';
 
 const FindBroker = () => {
   const [searchParams] = useSearchParams();
   const showMap = searchParams.get('map') === 'true';
+  
+  // Get filters from URL
+  const category = searchParams.get('category');
+  const location = searchParams.get('location');
+  
+  // Fetch brokers from Supabase
+  const { brokers, loading, error } = useBrokerServices({
+    category: category || undefined,
+    location: location || undefined,
+  });
   
   const {
     searchQuery,
@@ -36,6 +47,21 @@ const FindBroker = () => {
     setShowDistanceFilter,
     filteredBrokers
   } = useBrokerFilters(brokers);
+
+  // Show error toast if there's an error
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Error loading brokers",
+        description: error,
+        variant: "destructive",
+      });
+    }
+  }, [error]);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="min-h-screen bg-background pb-20">

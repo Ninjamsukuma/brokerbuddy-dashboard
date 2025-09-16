@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { 
@@ -11,7 +10,8 @@ import NavigationBar from '@/components/ui/NavigationBar';
 import BottomTabs from '@/components/ui/BottomTabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/components/ui/use-toast';
-import { mockListings } from '@/data/mockListings';
+import { useBrokerOwnServices } from '@/hooks/useBrokerServices';
+import { useServiceRequests, transformRequestsToOrders } from '@/hooks/useServiceRequests';
 import DashboardStats from '@/components/broker-dashboard/DashboardStats';
 import BrokerStatistics from '@/components/broker-dashboard/BrokerStatistics';
 import SearchBar from '@/components/broker-dashboard/SearchBar';
@@ -24,6 +24,7 @@ import BrokerMessages from '@/components/broker-dashboard/BrokerMessages';
 import BrokerOrders from '@/components/broker-dashboard/BrokerOrders';
 import { User, ListFilter, MessageSquare, ShoppingBag, UserCircle, Share2, LogOut, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 const BrokerDashboard = () => {
   const navigate = useNavigate();
@@ -34,7 +35,39 @@ const BrokerDashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'pending' | 'sold'>('all');
   const [showDetailedStats, setShowDetailedStats] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  
+  // Fetch real data from Supabase
+  const { 
+    services: listings, 
+    loading: listingsLoading, 
+    error: listingsError,
+    createService,
+    updateService,
+    deleteService 
+  } = useBrokerOwnServices();
+  
+  const { 
+    requests, 
+    loading: ordersLoading, 
+    error: ordersError 
+  } = useServiceRequests('broker');
+
+  // Transform requests to orders format for existing components
+  const orders = transformRequestsToOrders(requests);
+
+  // Transform BrokerService to Listing format for compatibility
+  const transformedListings = listings.map(service => ({
+    id: service.id,
+    title: service.title,
+    price: service.price_min || 0,
+    location: service.location || '',
+    type: 'Service',
+    status: service.is_active ? 'active' as const : 'pending' as const,
+    featured: false,
+    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&w=350&q=80',
+    createdAt: service.created_at.split('T')[0],
+    views: 0
+  }));
   
   // Set active tab from URL parameter if available
   useEffect(() => {
@@ -44,52 +77,71 @@ const BrokerDashboard = () => {
     }
   }, [searchParams]);
 
-  // Simple filtering logic
-  const filteredListings = mockListings.filter(listing => {
+  // Simple filtering logic for listings
+  const filteredListings = transformedListings.filter(listing => {
     const matchesSearch = listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           listing.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           listing.type.toLowerCase().includes(searchQuery.toLowerCase());
-    
     const matchesStatus = filterStatus === 'all' || listing.status === filterStatus;
-    
     return matchesSearch && matchesStatus;
   });
-  
+
+  // Handle error messages
   useEffect(() => {
-    // Add a small delay to simulate loading and avoid flash of content
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-    
-    return () => clearTimeout(timer);
-  }, []);
+    if (listingsError) {
+      toast({
+        title: "Error loading listings",
+        description: listingsError,
+        variant: "destructive",
+      });
+    }
+    if (ordersError) {
+      toast({
+        title: "Error loading orders",
+        description: ordersError,
+        variant: "destructive",
+      });
+    }
+  }, [listingsError, ordersError]);
   
   const handleAddListing = () => {
+    // TODO: Implement add listing functionality
     toast({
-      title: "Feature coming soon",
-      description: "The ability to add new listings will be available soon.",
+      title: "Add Listing",
+      description: "Add listing functionality will be implemented",
       duration: 3000,
     });
   };
   
   const handleEditListing = (id: string) => {
+    // TODO: Implement edit listing functionality
     toast({
-      title: "Edit listing",
-      description: `Editing listing ${id}`,
+      title: "Edit Listing",
+      description: `Edit listing ${id} functionality will be implemented`,
       duration: 3000,
     });
   };
   
-  const handleDeleteListing = (id: string) => {
-    toast({
-      title: "Delete listing",
-      description: `Deleting listing ${id}`,
-      duration: 3000,
-    });
+  const handleDeleteListing = async (id: string) => {
+    try {
+      await deleteService(id);
+      toast({
+        title: "Success",
+        description: "Listing deleted successfully",
+        duration: 3000,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete listing",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
   };
   
   const handleShareListing = (id: string) => {
-    navigate('/marketing-materials');
+    navigate(`/marketing-materials?listing=${id}`);
   };
   
   const toggleDetailedStats = () => {
@@ -129,13 +181,9 @@ const BrokerDashboard = () => {
     }
   }, [user, navigate]);
   
-  // Show loading state or redirect if not a broker
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-dalali-600">Loading broker dashboard...</div>
-      </div>
-    );
+  // Show loading spinner while data is loading
+  if (listingsLoading || ordersLoading) {
+    return <LoadingSpinner />;
   }
   
   // If user is not authenticated or not a broker, the useEffect above will handle redirection
@@ -203,7 +251,7 @@ const BrokerDashboard = () => {
             </Button>
             
             {/* Dashboard Stats */}
-            <DashboardStats listings={mockListings} />
+            <DashboardStats listings={transformedListings} />
             
             {/* Toggle Detailed Stats Button */}
             <button 
@@ -215,7 +263,7 @@ const BrokerDashboard = () => {
             
             {/* Detailed Statistics (conditionally rendered) */}
             {showDetailedStats && (
-              <BrokerStatistics listings={mockListings} />
+              <BrokerStatistics listings={transformedListings} />
             )}
             
             {/* Search and Filters */}
@@ -256,7 +304,7 @@ const BrokerDashboard = () => {
           </TabsContent>
           
           <TabsContent value="orders">
-            <BrokerOrders />
+            <BrokerOrders orders={orders} />
           </TabsContent>
           
           <TabsContent value="profile">
