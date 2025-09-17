@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRealtimeUpdates } from './useRealtimeUpdates';
 
 export type BookingStatus = 'pending' | 'accepted' | 'in_progress' | 'completed' | 'cancelled';
 
@@ -191,6 +192,14 @@ export const useServiceRequests = (userRole?: 'client' | 'broker') => {
       throw err;
     }
   };
+
+  // Set up realtime updates
+  useRealtimeUpdates(
+    'service_requests',
+    () => refetch(), // On insert, refetch data
+    () => refetch(), // On update, refetch data
+    () => refetch()  // On delete, refetch data
+  );
 
   useEffect(() => {
     fetchRequests();

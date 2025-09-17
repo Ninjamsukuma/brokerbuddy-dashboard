@@ -1,8 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight, Clipboard, Clock, Check, X, MoreHorizontal } from 'lucide-react';
 import NavigationBar from '../components/ui/NavigationBar';
 import BottomTabs from '../components/ui/BottomTabs';
+import { useServiceRequests } from '@/hooks/useServiceRequests';
+import { useAuth } from '@/contexts/AuthContext';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { formatDistanceToNow } from 'date-fns';
 
 interface Request {
   id: string;
@@ -16,58 +20,10 @@ interface Request {
   };
 }
 
-const requests: Request[] = [
-  {
-    id: '1',
-    title: '2BHK Apartment in Kinondoni',
-    description: 'Looking for a 2BHK apartment in Kinondoni area with parking and security',
-    date: '2023-06-15',
-    status: 'in_progress',
-    broker: {
-      name: 'James Wilson',
-      avatar: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    }
-  },
-  {
-    id: '2',
-    title: 'Toyota Land Cruiser Inspection',
-    description: 'Need a pre-purchase inspection for a 2018 Toyota Land Cruiser',
-    date: '2023-06-10',
-    status: 'accepted',
-    broker: {
-      name: 'Sarah Johnson',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    }
-  },
-  {
-    id: '3',
-    title: 'Commercial Space for Rent',
-    description: 'Looking for a 150sqm commercial space in CBD area for retail business',
-    date: '2023-05-28',
-    status: 'pending'
-  },
-  {
-    id: '4',
-    title: 'Home Valuation in Mikocheni',
-    description: 'Need property valuation for a 4 bedroom house in Mikocheni A',
-    date: '2023-05-15',
-    status: 'completed',
-    broker: {
-      name: 'Michael Rodriguez',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    }
-  },
-  {
-    id: '5',
-    title: 'Honda Accord Sale',
-    description: 'Need assistance selling my 2019 Honda Accord in good condition',
-    date: '2023-04-22',
-    status: 'cancelled'
-  }
-];
-
 const Requests = () => {
   const [activeTab, setActiveTab] = useState<'active' | 'completed' | 'all'>('active');
+  const { user } = useAuth();
+  const { requests, loading, error } = useServiceRequests(user?.role);
   
   const filteredRequests = requests.filter(request => {
     if (activeTab === 'active') {
@@ -78,7 +34,11 @@ const Requests = () => {
     return true;
   });
 
-  const getStatusChip = (status: Request['status']) => {
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  const getStatusChip = (status: string) => {
     switch (status) {
       case 'pending':
         return <div className="chip bg-amber-100 text-amber-700">Pending</div>;
@@ -90,10 +50,12 @@ const Requests = () => {
         return <div className="chip bg-green-100 text-green-700">Completed</div>;
       case 'cancelled':
         return <div className="chip bg-red-100 text-red-700">Cancelled</div>;
+      default:
+        return <div className="chip bg-gray-100 text-gray-700">Unknown</div>;
     }
   };
 
-  const getStatusIcon = (status: Request['status']) => {
+  const getStatusIcon = (status: string) => {
     switch (status) {
       case 'pending':
         return <Clock size={18} className="text-amber-500" />;
@@ -105,6 +67,8 @@ const Requests = () => {
         return <Check size={18} className="text-green-500" />;
       case 'cancelled':
         return <X size={18} className="text-red-500" />;
+      default:
+        return <Clock size={18} className="text-gray-500" />;
     }
   };
 
@@ -160,36 +124,12 @@ const Requests = () => {
                   <div className="flex justify-between items-center text-sm text-gray-500">
                     <div className="flex items-center">
                       <Clipboard size={14} className="mr-1" />
-                      <span>Request ID: #{request.id}</span>
+                      <span>Request ID: #{request.id.slice(0, 8)}</span>
                     </div>
-                    <span>{new Date(request.date).toLocaleDateString()}</span>
+                    <span>{formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}</span>
                   </div>
                   
-                  {request.broker && (
-                    <div className="mt-4 pt-3 border-t border-gray-100">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-8 h-8 rounded-full overflow-hidden">
-                            <img 
-                              src={request.broker.avatar} 
-                              alt={request.broker.name} 
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-dalali-800">
-                              {request.broker.name}
-                            </p>
-                            <p className="text-xs text-gray-500">Assigned Broker</p>
-                          </div>
-                        </div>
-                        
-                        <button className="text-dalali-600 text-sm font-medium">
-                          Contact
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  {/* Broker info would need to be fetched separately or joined */}
                   
                   {['pending', 'accepted', 'in_progress'].includes(request.status) && (
                     <div className="mt-4 flex space-x-2">

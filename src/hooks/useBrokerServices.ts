@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRealtimeUpdates } from './useRealtimeUpdates';
 
 export interface BrokerService {
   id: string;
@@ -143,6 +144,14 @@ export const useBrokerServices = (filters?: {
       setLoading(false);
     }
   };
+
+  // Set up realtime updates
+  useRealtimeUpdates(
+    'broker_services',
+    () => refetch(), // On insert, refetch data
+    () => refetch(), // On update, refetch data
+    () => refetch()  // On delete, refetch data
+  );
 
   useEffect(() => {
     if (filters?.userLat && filters?.userLng) {
