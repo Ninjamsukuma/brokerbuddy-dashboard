@@ -3,18 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
 export interface Route {
-  id: string;
   path: string;
-  name: string;
-  title: string;
-  description?: string;
-  component: string;
-  access_level: 'public' | 'authenticated' | 'client' | 'broker' | 'admin';
-  parent_route_id?: string;
-  is_navigation_item: boolean;
-  icon?: string;
-  order_priority: number;
-  redirect_path?: string;
+  access_level: string;
 }
 
 export const useRoutes = () => {
@@ -49,15 +39,13 @@ export const useRoutes = () => {
     }
   };
 
-  const getNavigationRoutes = (): Route[] => {
-    return routes.filter(route => route.is_navigation_item);
-  };
-
   const getRouteByPath = (path: string): Route | undefined => {
     return routes.find(route => route.path === path);
   };
 
-  const isRouteAccessible = (route: Route): boolean => {
+  const isRouteAccessible = (path: string): boolean => {
+    const route = routes.find(r => r.path === path);
+    if (!route) return false;
     if (route.access_level === 'public') return true;
     if (!user) return false;
     if (route.access_level === 'authenticated') return true;
@@ -65,14 +53,18 @@ export const useRoutes = () => {
   };
 
   const getAccessibleRoutes = (): Route[] => {
-    return routes.filter(route => isRouteAccessible(route));
+    return routes.filter(route => {
+      if (route.access_level === 'public') return true;
+      if (!user) return false;
+      if (route.access_level === 'authenticated') return true;
+      return route.access_level === user.role;
+    });
   };
 
   return {
     routes,
     loading,
     error,
-    getNavigationRoutes,
     getRouteByPath,
     isRouteAccessible,
     getAccessibleRoutes,

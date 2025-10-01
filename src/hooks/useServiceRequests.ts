@@ -88,7 +88,13 @@ export const useServiceRequests = (userRole?: 'client' | 'broker') => {
 
       if (error) throw error;
 
-      setRequests(data || []);
+      // Cast status to proper type
+      const typedData = (data || []).map(item => ({
+        ...item,
+        status: item.status as BookingStatus
+      }));
+
+      setRequests(typedData);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -196,9 +202,9 @@ export const useServiceRequests = (userRole?: 'client' | 'broker') => {
   // Set up realtime updates
   useRealtimeUpdates(
     'service_requests',
-    () => refetch(), // On insert, refetch data
-    () => refetch(), // On update, refetch data
-    () => refetch()  // On delete, refetch data
+    () => fetchRequests(), // On insert, refetch data
+    () => fetchRequests(), // On update, refetch data
+    () => fetchRequests()  // On delete, refetch data
   );
 
   useEffect(() => {

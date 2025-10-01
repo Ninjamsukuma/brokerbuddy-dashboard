@@ -148,9 +148,9 @@ export const useBrokerServices = (filters?: {
   // Set up realtime updates
   useRealtimeUpdates(
     'broker_services',
-    () => refetch(), // On insert, refetch data
-    () => refetch(), // On update, refetch data
-    () => refetch()  // On delete, refetch data
+    () => fetchServices(), // On insert, refetch data
+    () => fetchServices(), // On update, refetch data
+    () => fetchServices()  // On delete, refetch data
   );
 
   useEffect(() => {
